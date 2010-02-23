@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<configuration>
+	<property>
+		<name>likelike.reduces</name>
+		<value>1</value>
+	</property>
+</configuration>
