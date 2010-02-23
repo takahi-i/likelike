@@ -72,17 +72,22 @@ public class SelectClustersMapper extends
     public final void setup(final Context context) {
         Configuration jc = context.getConfiguration();
         /** create a object implements IHashFunction */
-        String functionClassName = LikelikeConstants.DEFAULT_HASH_FUNCTION;
+        String functionClassName 
+            = LikelikeConstants.DEFAULT_HASH_FUNCTION;
         if (context == null || jc == null) {
             /* added default configuration for testing */
             jc = new Configuration();
         }
         try {
-            functionClassName = jc.get(LikelikeConstants.HASH_FUNCTION,
+            functionClassName = jc.get(
+                    LikelikeConstants.HASH_FUNCTION,
                     LikelikeConstants.DEFAULT_HASH_FUNCTION);
-            Class<? extends IHashFunction> functionClass = Class.forName(
-                    functionClassName).asSubclass(IHashFunction.class);
-            Constructor<? extends IHashFunction> constructor = functionClass
+            Class<? extends IHashFunction> functionClass 
+                = Class.forName(
+                    functionClassName).asSubclass(
+                            IHashFunction.class);
+            Constructor<? extends IHashFunction> constructor 
+                = functionClass
                     .getConstructor(Configuration.class);
             function = constructor.newInstance(jc);
         } catch (NoSuchMethodException nsme) {

@@ -61,7 +61,7 @@ public class LSHRecommendations extends
     LikelikeLogger logger 
         = LikelikeLogger.getLogger();
 
-    /** random generator */
+    /** random generator. */
     Random rand = new Random();
     
     static {

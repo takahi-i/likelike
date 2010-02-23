@@ -33,15 +33,18 @@ public class MinWiseFunction implements IHashFunction {
      * 
      */
     @Override
-    public LongWritable returnClusterId(Map<Long,Long> featureVector) {
+    public LongWritable returnClusterId(
+            Map<Long,Long> featureVector) {
         long clusterId = 0;
         
         TreeMap<Long,Long> hashedFeatureVector 
-            = new TreeMap<Long,Long>(); // key: hashed, value: id 
+            = new TreeMap<Long,Long>(); // key: hashed, value: id
+        
         for (Long key : featureVector.keySet()) {
             hashedFeatureVector.put(this.calcHash.run(key), 
                         new Long(featureVector.get(key)));
         }
+        
         for (int i = 0; i < this.depth; i ++ ) {
             if (hashedFeatureVector.size() <= 0) {
                 return new LongWritable(clusterId);
@@ -59,7 +62,8 @@ public class MinWiseFunction implements IHashFunction {
      * @param conf get parameters.
      */
     public MinWiseFunction(Configuration conf) {
-        this.calcHash = new CalcHashValue(conf.getLong(MINWISE_HASH_SEED, 
+        this.calcHash = new CalcHashValue(
+                conf.getLong(MINWISE_HASH_SEED, 
                 DEFAULT_MINWISE_HASH_SEED));
         this.depth = conf.getInt(LikelikeConstants.FEATURE_DEPTH,
                 LikelikeConstants.DEFAULT_FEATURE_DEPTH);
