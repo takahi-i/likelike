@@ -37,10 +37,10 @@ public class SelectClustersReducer extends
             final Context context)
             throws IOException, InterruptedException {
         
-        String idsStr = new String();
+        StringBuffer idsStr = new StringBuffer();
         long clusterSize = 0;
         for (LongWritable id : values) {
-            idsStr += (id.toString() + ":");
+            idsStr.append(id.toString() + ":");
             clusterSize += 1;
             if (clusterSize >= this.maximumClusterSize) {
                 break;
@@ -48,7 +48,7 @@ public class SelectClustersReducer extends
         }
         
         if (this.minimumClusterSize <= clusterSize) {
-            context.write(key, new Text(idsStr));            
+            context.write(key, new Text(idsStr.toString()));            
         }
     }
     
