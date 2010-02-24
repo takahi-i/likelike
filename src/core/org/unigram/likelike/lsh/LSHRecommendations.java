@@ -33,7 +33,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
 
 import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
@@ -44,12 +43,12 @@ import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-
 import org.unigram.likelike.lsh.function.MinWiseFunction;
 import org.unigram.likelike.common.Candidate;
 import org.unigram.likelike.common.FsUtil;
 import org.unigram.likelike.common.LikelikeConstants;
 import org.unigram.likelike.common.LikelikeLogger;
+import org.unigram.likelike.common.RelatedUsersWritable;
 
 /**
  * Extract recommendations for input examples. 
@@ -80,6 +79,7 @@ public class LSHRecommendations extends
 
     public int run(String[] args, Configuration conf) 
     throws Exception {
+
         String inputFile = "";
         String outputPrefix = "";
         String clusterDir = "";
@@ -135,7 +135,6 @@ public class LSHRecommendations extends
             if (i == 0) {
                 this.setResultConf(counters, conf);
             }
-
         }
         
          this.getRecommendations(clusterDir + "/*", 
@@ -235,7 +234,7 @@ public class LSHRecommendations extends
         job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(LongWritable.class);
         job.setOutputKeyClass(LongWritable.class);
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(RelatedUsersWritable.class);
         job.setOutputFormatClass(
                 SequenceFileOutputFormat.class);
         job.setNumReduceTasks(

@@ -18,34 +18,38 @@ package org.unigram.likelike.lsh
 ;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.unigram.likelike.common.Candidate;
+import org.unigram.likelike.common.RelatedUsersWritable;
 
 public class GetRecommendationsMapper extends
-        Mapper<LongWritable, Text, LongWritable, Candidate> {
+        Mapper<LongWritable, RelatedUsersWritable, LongWritable, Candidate> {
     
     @Override
     public final void map(final LongWritable key,
-            final Text value, final Context context) 
+            final RelatedUsersWritable value, final Context context) 
     throws IOException, InterruptedException {
-        String valueStr = value.toString();
-        String[] valueArray = valueStr.split(":");
-
-        for (int i = 0; i < valueArray.length; i++) {
+        List<LongWritable> relatedUsers = value.getRelatedUsers();
+        
+        //System.out.println("relatedUsers.size():" + relatedUsers.size());
+        
+        for (int i = 0; i < relatedUsers.size(); i++) {
             LongWritable targetId 
-            = new LongWritable(Long.parseLong(valueArray[i]));            
-            for (int j = 0; j < valueArray.length; j++) {
+            = new LongWritable(relatedUsers.get(i).get());
+            //System.out.println("targetId: " + targetId);            
+            for (int j = 0; j < relatedUsers.size(); j++) {
                 if (i == j) {
                     continue;
                 }
                 LongWritable candidateId 
-                    = new LongWritable(Long.parseLong(valueArray[j]));
+                    = new LongWritable(relatedUsers.get(j).get());
             
                 context.write(targetId, new Candidate(candidateId, 
-                        new LongWritable(valueArray.length)));
+                        new LongWritable(relatedUsers.size())));
             }
         }
     }

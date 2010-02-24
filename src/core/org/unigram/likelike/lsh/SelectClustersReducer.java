@@ -17,6 +17,8 @@
 package org.unigram.likelike.lsh;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.hadoop.conf.Configuration;
@@ -26,10 +28,11 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
 import org.unigram.likelike.common.LikelikeConstants;
+import org.unigram.likelike.common.RelatedUsersWritable;
 
 public class SelectClustersReducer extends
         Reducer<LongWritable, LongWritable,
-        LongWritable, Text> {
+        LongWritable, RelatedUsersWritable> {
     
     @Override
     public void reduce(final LongWritable key,
@@ -37,10 +40,10 @@ public class SelectClustersReducer extends
             final Context context)
             throws IOException, InterruptedException {
         
-        StringBuffer idsStr = new StringBuffer();
+        List<LongWritable> ids = new ArrayList<LongWritable>();
         long clusterSize = 0;
         for (LongWritable id : values) {
-            idsStr.append(id.toString() + ":");
+            ids.add(new LongWritable(id.get()));
             clusterSize += 1;
             if (clusterSize >= this.maximumClusterSize) {
                 break;
@@ -48,7 +51,9 @@ public class SelectClustersReducer extends
         }
         
         if (this.minimumClusterSize <= clusterSize) {
-            context.write(key, new Text(idsStr.toString()));            
+            RelatedUsersWritable relatedUsers = new RelatedUsersWritable(ids);
+            //System.out.println("RelatedUsers:" + relatedUsers.toString());
+            context.write(key, relatedUsers);
         }
     }
     

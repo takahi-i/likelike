@@ -64,7 +64,6 @@ public class TestLSHRecommendations extends TestCase {
         conf.set("fs.default.name", "file:///");
         conf.set("mapred.job.tracker", "local");
         
-        
         LSHRecommendations job = new LSHRecommendations();
         
         try {

@@ -30,8 +30,10 @@ public class RelatedUsersWritable implements Writable {
     public void readFields(DataInput in) throws IOException {
         this.relatedUsers= new ArrayList<LongWritable>();
         try {
-            long userID = in.readLong();
-            this.relatedUsers.add(new LongWritable(userID));
+            do {
+                long userID = in.readLong();
+                this.relatedUsers.add(new LongWritable(userID));
+            } while (true);
         } catch (EOFException e) {
             // do nothing
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -51,7 +53,7 @@ public class RelatedUsersWritable implements Writable {
         StringBuilder rtStr = new StringBuilder();
         for (LongWritable user : this.relatedUsers) {
             rtStr.append(user);
-            rtStr.append(':');      
+            rtStr.append(' ');      
         }
         return rtStr.toString();
     }
