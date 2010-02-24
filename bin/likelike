@@ -48,7 +48,7 @@ if [ ${TASK} == "-help" ] || [ ${TASK} == "help" ] || [ ${TASK} == "-h" ]; then
   exit 1
 fi
 
-# get absolute path
+# get absolute path                                                                                                                                                                 
 this="$0"
 while [ -h "$this" ]; do
   ls=`ls -ld "$this"`
@@ -59,16 +59,17 @@ while [ -h "$this" ]; do
     this=`dirname "$this"`/"$link"
   fi
 done
-                                                                                                                              
+
 bin=`dirname "$this"`
 script=`basename "$this"`
 bin=`cd "$bin"; pwd`
 this="$bin/$script"
 
-# setting variables
+# setting variables                                                                                                                                                                 
 export LIKELIKE_HOME=`dirname "$this"`/..
-export LIKELIKE_EXAMPLE=$OLUOLU_HOME/likelike.0.1-examples.jar
+export LIKELIKE_EXAMPLE=$LIKELIKE_HOME/likelike-0.01-examples.jar
 export LIKELIKE_DRIVER_CLASS='org.unigram.likelike.LikelikeDriver'
 
-# exec
+# exec                                                                                                                                                                              
 exec $HADOOP_HOME/bin/hadoop jar $LIKELIKE_EXAMPLE $LIKELIKE_DRIVER_CLASS $TASK $@
+
