@@ -20,7 +20,10 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-final public class LikelikeLogger extends Logger {
+/**
+ * Logger.
+ */
+public final class LikelikeLogger extends Logger {
 
     /** logger (Singleton). */
     private static LikelikeLogger defaultLogger =
@@ -79,7 +82,7 @@ final public class LikelikeLogger extends Logger {
      * Flush msg as Severe Information. 
      * @param msg message to be flushed by logger 
      */
-    public void logSevere(String msg) {
+    public void logSevere(final String msg) {
         this.log(Level.SEVERE, msg);
     }
     
@@ -87,7 +90,7 @@ final public class LikelikeLogger extends Logger {
      * Flush msg as log information.
      * @param msg message to be flushed by logger 
      */
-    public void logInfo(String msg) {
+    public void logInfo(final String msg) {
         this.log(Level.INFO, msg);
     }    
     
@@ -95,7 +98,7 @@ final public class LikelikeLogger extends Logger {
      * Flush msg as warning.
      * @param msg message to be flushed by logger 
      */
-    public void logWarning(String msg) {
+    public void logWarning(final String msg) {
         this.log(Level.WARNING, msg);
     }  
     
@@ -103,7 +106,7 @@ final public class LikelikeLogger extends Logger {
      * Flush msg for configuration information.
      * @param msg message to be flushed by logger 
      */
-    public void logConfig(String msg) {
+    public void logConfig(final String msg) {
         this.log(Level.CONFIG, msg);
     }      
     
@@ -111,7 +114,7 @@ final public class LikelikeLogger extends Logger {
      * Flush msg to tell the state is fine.
      * @param msg message to be flushed by logger 
      */
-    public void logFine(String msg) {
+    public void logFine(final String msg) {
         this.log(Level.FINE, msg);
     }      
     

@@ -16,12 +16,21 @@
  */
 package org.unigram.likelike.lsh.function;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
 
+/**
+ * Interface hash function for LSH. 
+ */
 public interface IHashFunction {
-    LongWritable returnClusterId(Map<Long, Long> featureVector);
+    /**
+     * Compute hashing function.
+     *  
+     * @param featureVector feature vector
+     * @param seed hash seed
+     * @return hashed value
+     */
+    LongWritable returnClusterId(Map<Long, Long> featureVector, 
+            long seed);
 }

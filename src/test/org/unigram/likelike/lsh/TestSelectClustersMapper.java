@@ -27,12 +27,15 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.unigram.likelike.common.LikelikeConstants;
+import org.unigram.likelike.common.SeedClusterId;
 import org.unigram.likelike.lsh.function.CalcHashValue;
 import org.unigram.likelike.lsh.function.MinWiseFunction;
 
 import static org.mockito.Mockito.*;
 
 public class TestSelectClustersMapper extends TestCase {
+
+    private static final long HASH_SEED = 1L;
 
     public TestSelectClustersMapper(String name) {
         super(name);
@@ -41,11 +44,10 @@ public class TestSelectClustersMapper extends TestCase {
     @SuppressWarnings("unchecked")
     public void testMap() {
 
-        CalcHashValue calcHash = new CalcHashValue(
-                MinWiseFunction.DEFAULT_MINWISE_HASH_SEED);         
+        CalcHashValue calcHash = new CalcHashValue();         
 
         SelectClustersMapper mapper = new SelectClustersMapper();        
-        Mapper<LongWritable, Text, LongWritable, LongWritable>.Context mock_context
+        Mapper<LongWritable, Text, SeedClusterId, LongWritable>.Context mock_context
             = mock(Mapper.Context.class);
         mapper.setup(mock_context);
         
@@ -69,20 +71,17 @@ public class TestSelectClustersMapper extends TestCase {
          int[] features = {1, 2, 43, 21}; 
          
          for (int i = 0; i<features.length; i++ ) {
-             hashedFeatureVector.put(calcHash.run(features[i]), 
+             hashedFeatureVector.put(calcHash.run(new Long(features[i]), this.HASH_SEED), 
                          new Long(1));
          }         
          
          try {
              verify(mock_context, times(1)).write(
-                     new LongWritable(hashedFeatureVector.firstKey()),
+                     new SeedClusterId(this.HASH_SEED, hashedFeatureVector.firstKey()),
                      new LongWritable(327));
          } catch (Exception e) {
              TestCase.fail();
          }  
-
-        
-        
         
     }
 

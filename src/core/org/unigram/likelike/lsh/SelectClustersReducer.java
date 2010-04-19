@@ -19,28 +19,40 @@ package org.unigram.likelike.lsh;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
 import org.unigram.likelike.common.LikelikeConstants;
 import org.unigram.likelike.common.RelatedUsersWritable;
+import org.unigram.likelike.common.SeedClusterId;
 
+/**
+ * SelectClustersReducer. 
+ */
 public class SelectClustersReducer extends
-        Reducer<LongWritable, LongWritable,
-        LongWritable, RelatedUsersWritable> {
+        Reducer<SeedClusterId, LongWritable,
+        SeedClusterId, RelatedUsersWritable> {
     
+    /**
+     * Reduce.
+     * 
+     * @param key cluster id
+     * @param values user names
+     * @param context -
+     * @throws IOException -
+     * @throws InterruptedException -
+     */
     @Override
-    public void reduce(final LongWritable key,
+    public void reduce(final SeedClusterId key,
             final Iterable<LongWritable> values,
             final Context context)
             throws IOException, InterruptedException {
         
-        List<LongWritable> ids = new ArrayList<LongWritable>();
+        List<LongWritable> ids 
+            = new ArrayList<LongWritable>();
         long clusterSize = 0;
         for (LongWritable id : values) {
             ids.add(new LongWritable(id.get()));
@@ -51,12 +63,16 @@ public class SelectClustersReducer extends
         }
         
         if (this.minimumClusterSize <= clusterSize) {
-            RelatedUsersWritable relatedUsers = new RelatedUsersWritable(ids);
-            //System.out.println("RelatedUsers:" + relatedUsers.toString());
-            context.write(key, relatedUsers);
+            RelatedUsersWritable relatedUsers
+                = new RelatedUsersWritable(ids);
+                context.write(key, relatedUsers);
         }
     }
     
+    /**
+     * setup.
+     * @param context -
+     */
     @Override
     public final void setup(final Context context) {
         Configuration jc = context.getConfiguration();
@@ -71,9 +87,9 @@ public class SelectClustersReducer extends
                 LikelikeConstants.DEFAULT_MIN_CLUSTER_SIZE);                
     }
     
-    /** maximum number of examples in a cluster */
+    /** maximum number of examples in a cluster. */
     private long maximumClusterSize;
     
-    /** minimum number of examples in a cluster */    
+    /** minimum number of examples in a cluster. */    
     private long minimumClusterSize;
 }

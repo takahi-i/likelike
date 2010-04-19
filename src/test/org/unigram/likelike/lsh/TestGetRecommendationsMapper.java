@@ -24,8 +24,10 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.unigram.likelike.common.Candidate;
+import org.unigram.likelike.common.SeedClusterId;
 import org.unigram.likelike.common.RelatedUsersWritable;
 import org.unigram.likelike.lsh.GetRecommendationsMapper;
+
 
 import junit.framework.TestCase;
 
@@ -45,7 +47,7 @@ public class TestGetRecommendationsMapper extends TestCase {
         GetRecommendationsMapper mapper =
             new GetRecommendationsMapper();
 
-        Mapper<LongWritable, RelatedUsersWritable, LongWritable, 
+        Mapper<SeedClusterId, RelatedUsersWritable, LongWritable, 
         Candidate>.Context mock_context
             = mock(Mapper.Context.class);        
         
@@ -58,8 +60,8 @@ public class TestGetRecommendationsMapper extends TestCase {
         value.add(new LongWritable(54));
         value.add(new LongWritable(434));
         
-        LongWritable hashedClusterId 
-            = new LongWritable(143248978L);
+        SeedClusterId hashedClusterId 
+            = new SeedClusterId(1L,143248978L); 
         LongWritable clusterSize 
             = new LongWritable(7L); 
         try {

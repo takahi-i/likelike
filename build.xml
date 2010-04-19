@@ -15,16 +15,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-	
+
 <project name="likelike" default="main" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	<property name="version" value="0.01" />
+	<property name="version" value="0.2" />
 
 	<property name="likelike.jar" value="likelike-${version}.jar" />
 	<property name="likelike-test.jar" value="likelike-${version}-test.jar" />
 	<property name="likelike-examples.jar" value="likelike-${version}-examples.jar" />
-	<property name= "package" value="likelike-${version}" />
-	
+	<property name="package" value="likelike-${version}" />
+
 	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="conf.dir" value="${basedir}/conf" />
 
@@ -39,24 +39,23 @@
 	<property name="build.dir" location="${src.dir}/build" />
 	<property name="core.build.dir" location="${core.src.dir}/build" />
 	<property name="test.build.dir" location="${test.src.dir}/build" />
-	<property name="examples.build.dir" location="${examples.src.dir}/build" />	
+	<property name="examples.build.dir" location="${examples.src.dir}/build" />
 	<property name="test.build.resource.dir" location="${test.build.dir}/resources" />
 	<property name="reports.dir" location="${test.build.dir}/reports" />
-	<property name="dist.dir" value="${build.dir}/${package}" />	
-	
+	<property name="dist.dir" value="${build.dir}/${package}" />
+
 	<!-- ivy properties -->
 	<property name="ivy.dir" location="${basedir}/ivy" />
 	<property name="ivy.install.version" value="2.0.0-beta1" />
 	<property name="ivy.jar.file" value="${ivy.dir}/ivy.jar" />
 	<property name="build.ivy.dir" location="${test.build.dir}/ivy" />
-	<property name="ivy.artifact.retrieve.pattern" 
-		value="${ant.project.name}/[conf]/[artifact]-[revision].[ext]" />
+	<property name="ivy.artifact.retrieve.pattern" value="${ant.project.name}/[conf]/[artifact]-[revision].[ext]" />
 	<property name="ivy.lib.dir" value="${build.ivy.dir}/lib/${ant.project.name}" />
 	<property name="common.ivy.lib.dir" value="${ivy.lib.dir}/common" />
-	<property name="ivy.url" value="http://repo1.maven.org/maven2/org/apache/ivy/ivy"/>	
+	<property name="ivy.url" value="http://repo1.maven.org/maven2/org/apache/ivy/ivy" />
 	<property name="build.ivy.dir" location="${test.build.dir}/ivy" />
 	<property name="build.ivy.lib.dir" location="${build.ivy.dir}/lib" />
-	
+
 	<path id="classpath">
 		<fileset dir="${lib.dir}">
 			<include name="*.jar" />
@@ -64,14 +63,18 @@
 		<fileset dir="${basedir}">
 			<include name="*.jar" />
 		</fileset>
-	    <path refid="ivy-common-classpath"/>
+		<path refid="ivy-common-classpath" />
 	</path>
 
-	<target name="main"
-		depends="init, compile, compress, examples-compress, test-run"
-		description="Main target">
+	<target name="main" depends="init, compile, compress, examples-compress, test-run" description="Main target">
 		<echo>
-			Building the jar file.
+			Build the jar files.
+	    </echo>
+	</target>
+
+	<target name="all" depends="main, checkstyle" description="Main target with check the coding style">
+		<echo>
+			Build the jar files, run tests, run code inspection.
 	    </echo>
 	</target>
 
@@ -85,8 +88,8 @@
 	</target>
 
 	<target name="compile" description="Compilation target">
-		<javac srcdir="${src.dir}" debug="on" includes="**/*.java"
-			verbose="off" classpathref="classpath" destdir="${core.build.dir}">
+		<javac srcdir="${src.dir}" debug="on" includes="**/*.java" verbose="off" 
+				classpathref="classpath" destdir="${core.build.dir}">
 			<compilerarg value="-Xlint:deprecation" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -100,7 +103,7 @@
 	<target name="clean" depends="init" description="Deletes build products">
 		<delete dir="${examples.build.dir}" />
 		<delete dir="${test.build.dir}" />
-		<delete dir="${core.build.dir}" />		
+		<delete dir="${core.build.dir}" />
 		<delete dir="${build.dir}" />
 		<delete dir="${javadoc.dir}" />
 		<delete dir="${reports.dir}" />
@@ -113,9 +116,7 @@
 	</target>
 
 	<target name="test-compile" depends="compress">
-		<javac srcdir="${test.src.dir}" debug="on"  
-			includes="**/*.java" verbose="off"
-			classpathref="classpath" destdir="${test.build.dir}">
+		<javac srcdir="${test.src.dir}" debug="on" includes="**/*.java" verbose="off" classpathref="classpath" destdir="${test.build.dir}">
 			<compilerarg value="-Xlint:deprecation" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -128,29 +129,26 @@
 
 	<target name="test-run" depends="test-compress" description="run test">
 		<copy todir="${test.build.resource.dir}">
-			<fileset dir="${test.resource.dir}"/>
+			<fileset dir="${test.resource.dir}" />
 		</copy>
-		<junit printsummary="true" errorProperty="test.failed"  maxmemory="512m" 
-			failureProperty="test.failed" fork="${junit.fork}" dir="${basedir}"
-			showoutput="true" haltonfailure="no">
-			<classpath refid="classpath"/>
-		    <formatter type="xml"/>			
-    	    <batchtest fork="yes" todir="${reports.dir}">
-            	<fileset dir="${test.build.dir}" includes="**/Test*.class"/>
-	        </batchtest>
+		<junit printsummary="true" errorProperty="test.failed" maxmemory="512m" failureProperty="test.failed" fork="${junit.fork}" dir="${basedir}" showoutput="true" haltonfailure="no">
+			<classpath refid="classpath" />
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${reports.dir}">
+				<fileset dir="${test.build.dir}" includes="**/Test*.class" />
+			</batchtest>
 		</junit>
 		<fail message="Tests failed!" if="test.failed" />
-	    <junitreport todir="${reports.dir}">
-	      <fileset dir="${reports.dir}">
-	        <include name="TEST-*.xml"/>
-	      </fileset>
-	      <report format="frames" todir="${reports.dir}"/>
-	    </junitreport> 					
+		<junitreport todir="${reports.dir}">
+			<fileset dir="${reports.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${reports.dir}" />
+		</junitreport>
 	</target>
 
 	<target name="examples-compile" depends="compress">
-		<javac srcdir="${examples.src.dir}" debug="on" includes="**/*.java"
-			verbose="off" classpathref="classpath" destdir="${examples.build.dir}">
+		<javac srcdir="${examples.src.dir}" debug="on" includes="**/*.java" verbose="off" classpathref="classpath" destdir="${examples.build.dir}">
 			<compilerarg value="-Xlint:deprecation" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -160,99 +158,113 @@
 		<jar jarfile="${likelike-examples.jar}" basedir="${examples.build.dir}">
 		</jar>
 	</target>
-	
-	<target name="dist" description="making package">
-	    <mkdir dir="${dist.dir}"/>
-	    <mkdir dir="${dist.dir}/lib"/>
-	    <mkdir dir="${dist.dir}/bin"/>
-	    <mkdir dir="${dist.dir}/doc"/>
-	    
-	    <copy todir="${dist.dir}/lib" 
-	    	includeEmptyDirs="false" flatten="true">
-	      <fileset dir="${common.ivy.lib.dir}"/>
-	    </copy>
-	    
-	    <copy file="ivy.xml" tofile="${dist.dir}/ivy.xml"/>	    
-	    
-    	<copy todir="${dist.dir}/ivy">
-      		<fileset dir="ivy"/>
-    	</copy>
-    	
- 		<copy todir="${dist.dir}/src" includeEmptyDirs="false" >
-	      <fileset dir="src" excludes="**/build/**/*"/>
-	    </copy>
-	    
- 		<copy todir="${dist.dir}/bin" includeEmptyDirs="true">
-	      <fileset dir="bin"/>
-	    </copy>
-	    
-	    <copy todir="${dist.dir}/doc" includeEmptyDirs="true">
-	      <fileset dir="doc"/>
-	    </copy>
-	    
-    	<copy todir="${dist.dir}/" file="build.xml"/>
-	  	<copy todir="${dist.dir}/" file="${likelike.jar}"/>
-		<copy todir="${dist.dir}/" file="${likelike-examples.jar}"/>	  	
-	  
-    	<chmod perm="ugo+x" type="file" parallel="false">
-        	<fileset dir="${dist.dir}/bin"/>
-    	</chmod>
 
-	</target>	
-	
+	<target name="dist" description="making package">
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}/lib" />
+		<mkdir dir="${dist.dir}/bin" />
+		<mkdir dir="${dist.dir}/doc" />
+
+		<copy todir="${dist.dir}/lib" includeEmptyDirs="false" flatten="true">
+			<fileset dir="${common.ivy.lib.dir}" />
+		</copy>
+
+		<copy file="ivy.xml" tofile="${dist.dir}/ivy.xml" />
+
+		<copy todir="${dist.dir}/ivy">
+			<fileset dir="ivy" />
+		</copy>
+
+		<copy todir="${dist.dir}/src" includeEmptyDirs="false">
+			<fileset dir="src" excludes="**/build/**/*" />
+		</copy>
+
+		<copy todir="${dist.dir}/bin" includeEmptyDirs="true">
+			<fileset dir="bin" />
+		</copy>
+
+		<copy todir="${dist.dir}/doc" includeEmptyDirs="true">
+			<fileset dir="doc" />
+		</copy>
+
+		<copy todir="${dist.dir}/" file="build.xml" />
+		<copy todir="${dist.dir}/" file="${likelike.jar}" />
+		<copy todir="${dist.dir}/" file="${likelike-examples.jar}" />
+
+		<chmod perm="ugo+x" type="file" parallel="false">
+			<fileset dir="${dist.dir}/bin" />
+		</chmod>
+
+	</target>
+
 	<!-- ================================================================== -->
-	<!-- Run optional targets                                               -->         
-	<!-- ================================================================== -->	
-	
+	<!-- Run optional targets                                               -->
+	<!-- ================================================================== -->
+
 	<target name="download-ivy" unless="ivy.skip">
 		<mkdir dir="${ivy.dir}" />
 		<echo message="installing ivy..." />
 		<get src="${ivy.url}/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
-			dest="${ivy.jar.file}" usetimestamp="true" />
+				dest="${ivy.jar.file}" usetimestamp="true" />
 	</target>
-	
+
 	<target name="install-ivy" depends="download-ivy, init-ivy">
 		<path id="ivy.lib.path">
 			<fileset dir="${ivy.dir}" includes="**/*.jar" />
 		</path>
 		<taskdef resource="org/apache/ivy/ant/antlib.xml" 
-			uri="antlib:org.apache.ivy.ant" 
-			classpathref="ivy.lib.path" />
-	</target>
-	
-	<target name="ivy-resolve-common" depends="install-ivy">
-		<ivy:resolve conf="common"/>
+				uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
 	</target>
 
-	<target name="retrieve-common" depends="ivy-resolve-common"> 
-		<ivy:retrieve pattern="${build.ivy.lib.dir}/${ivy.artifact.retrieve.pattern}"/>
-		<ivy:cachepath pathid="ivy-common-classpath" conf="common"/>		
-	</target>	
+	<target name="ivy-resolve-common" depends="install-ivy">
+		<ivy:resolve conf="common" />
+	</target>
+
+	<target name="retrieve-common" depends="ivy-resolve-common">
+		<ivy:retrieve pattern="${build.ivy.lib.dir}/${ivy.artifact.retrieve.pattern}" />
+		<ivy:cachepath pathid="ivy-common-classpath" conf="common" />
+	</target>
 
 	<target name="clean-cache" description="clean cache" depends="init-ivy">
 		<ivy:cleancache />
 	</target>
-	
-	<target name="check-ivy" >
-	  <condition property="ivy.skip">
-	    <typefound uri="antlib:org.apache.ivy.ant" name="cleancache"/>
-	  </condition>
-	</target>	
 
-	  <target name="init-ivy" depends="download-ivy,check-ivy" 
-	  	unless="ivy.skip">
-	    <typedef uri="antlib:org.apache.ivy.ant" onerror="fail"
-	      loaderRef="ivyLoader">
-	      <classpath>
-	        <pathelement location="${ivy.jar.file}"/>
-	      </classpath>
-	    </typedef>
-	  </target>		
-	
-	<target name="clean-all" 
-			depends="clean, clean-cache" 
-			description="Deletes all build products">
+	<target name="check-ivy">
+		<condition property="ivy.skip">
+			<typefound uri="antlib:org.apache.ivy.ant" name="cleancache" />
+		</condition>
+	</target>
+
+	<target name="init-ivy" depends="download-ivy,check-ivy" unless="ivy.skip">
+		<typedef uri="antlib:org.apache.ivy.ant" onerror="fail" loaderRef="ivyLoader">
+			<classpath>
+				<pathelement location="${ivy.jar.file}" />
+			</classpath>
+		</typedef>
+	</target>
+
+	<target name="clean-all" depends="clean, clean-cache" description="Deletes all build products">
 		<delete dir="${ivy.jar.file}" />
-	</target>	
+	</target>
+
+
+	<target name="checkstyle" depends="retrive-checkstyle" description="Run checkstyle">
+		<taskdef resource="checkstyletask.properties">
+			<classpath refid="checkstyle-classpath" />
+		</taskdef>
+
+		<checkstyle config="${test.src.dir}/checkstyle.xml" classpathref="classpath">
+			<fileset dir="${core.src.dir}" includes="**/*.java" />
+		</checkstyle>
+	</target>
+
+	<target name="retrive-checkstyle" depends="install-ivy, ivy-resolve-checkstyle">
+		<ivy:retrieve pattern="${build.ivy.lib.dir}/${ivy.artifact.retrieve.pattern}" />
+		<ivy:cachepath pathid="checkstyle-classpath" conf="checkstyle" />
+	</target>
+
+	<target name="ivy-resolve-checkstyle" depends="init-ivy">
+		<ivy:resolve conf="checkstyle" />
+	</target>
 
 </project>

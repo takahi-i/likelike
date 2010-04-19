@@ -1,21 +1,23 @@
-package org.unigram.likelike.validate;
+package org.unigram.likelike.feature;
 
 import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Mapper.Context;
 
 /**
  *
  */
-public class ValidationMapper extends Mapper
-    <LongWritable, Text, LongWritable, Text> {
+public class FeatureExtractionMapper extends
+        Mapper<LongWritable, Text, LongWritable, Text> {
     
     /**
      * map.
-     * @param key -
-     * @param value -
+     * 
+     * @param key key
+     * @param value value
      * @param context -
      * @throws IOException -
      * @throws InterruptedException -
@@ -25,16 +27,16 @@ public class ValidationMapper extends Mapper
             final Text value, final Context context) 
         throws IOException, InterruptedException {    
         String valueStr = value.toString();
-        String[] valueArray = valueStr.split("\t"); 
-        if (valueArray.length == 2) { // candidate feature information 
-            context.write(new LongWritable(
-                    Long.parseLong(valueArray[0])), 
-                    new Text(valueArray[1]));
-        } else if (valueArray.length == 3) { // target with the feature
+        String[] valueArray = valueStr.split("\t");
+        /* when target, related, related-features */
+        if (valueArray.length == 3) { 
             context.write(
                     new LongWritable(
                             Long.parseLong(valueArray[0])), 
-                    new Text(valueArray[1] + "\t" + valueArray[2]));
+                    new Text(valueArray[2]));
+        } else {
+            System.out.println("Input shoud have three segments: " 
+                    + valueStr);
         }
     }
 }

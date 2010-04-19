@@ -18,6 +18,7 @@ package org.unigram.likelike;
 
 import org.apache.hadoop.util.ProgramDriver;
 
+import org.unigram.likelike.feature.FeatureExtraction;
 import org.unigram.likelike.lsh.LSHRecommendations;
 import org.unigram.likelike.validate.Validation;
 
@@ -35,7 +36,12 @@ public final class LikelikeDriver {
             pgd.addClass("lsh", LSHRecommendations.class,
                     "create recommendations.");
             pgd.addClass("validate", Validation.class,
-                    "validate the result recommended pairs with cosine similarity.");            
+                    "validate the result recommended pairs " +
+                    "with cosine similarity.");        
+            pgd.addClass("featureExtraction", 
+                    FeatureExtraction.class, "extract features");                    
+            pgd.addClass("help", ShowHelp.class,  "Show usage.");
+            pgd.addClass("version", ShowVersion.class,  "Show version.");            
             pgd.driver(argv);
             exitCode = 0;
         } catch (Throwable e) {

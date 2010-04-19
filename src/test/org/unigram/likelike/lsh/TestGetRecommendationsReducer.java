@@ -23,14 +23,13 @@ import java.util.List;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
-import org.mockito.InOrder;
 import org.unigram.likelike.common.Candidate;
-import org.unigram.likelike.lsh
-.GetRecommendationsReducer;
+import org.unigram.likelike.lsh.GetRecommendationsReducer;
 
 import junit.framework.TestCase;
 
 import static org.mockito.Mockito.*;
+import org.mockito.InOrder;
 
 public class TestGetRecommendationsReducer extends TestCase {
 

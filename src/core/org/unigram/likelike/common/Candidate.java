@@ -29,6 +29,7 @@ import java.io.IOException;
  */
 public class Candidate implements
     WritableComparable <Candidate> {
+    
     /** id of example. */
     private LongWritable id;
 
@@ -45,18 +46,19 @@ public class Candidate implements
 
     /**
      * Constructor.
-     * @param id user id
-     * @param inputQueryStr query string
-     * @param inputsize time
+     * 
+     * @param cid candidate (item) id
+     * @param clusterSize size of cluster
      */
-    public Candidate(final LongWritable id,
+    public Candidate(final LongWritable cid,
             final LongWritable clusterSize) {
-        this.id = id;
+        this.id = cid;
         this.size = clusterSize;
     }
 
     /**
      * Get userId who submit the query string.
+     * 
      * @return id
      */
     public final LongWritable getId() {
@@ -65,6 +67,7 @@ public class Candidate implements
 
     /**
      * Get the time when user submitted query.
+     * 
      * @return size 
      */
     public final LongWritable getSize() {
@@ -73,7 +76,8 @@ public class Candidate implements
 
     /**
      * Write the query information for serialization.
-     * @param out - DataOutput
+     * 
+     * @param out DataOutput
      * @throws IOException -
      */
     public final void write(
@@ -85,7 +89,7 @@ public class Candidate implements
 
     /**
      * Read the serialized the query information.
-     * @param in - DataInput
+     * @param in DataInput
      * @throws IOException -
      */
     public final void readFields(final DataInput in)

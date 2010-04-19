@@ -75,7 +75,7 @@ public final class FsUtil {
     * 
     * @param fs filesytem containing files with fileNames
     * @param fileNames file names to be removed
-    * @throws IOException
+    * @throws IOException -
     */
    public static void clean(final FileSystem fs, 
        final String... fileNames) throws IOException {
@@ -84,7 +84,7 @@ public final class FsUtil {
            Path path = new Path(fileNames[i]);
            if (fs.exists(path)) {
                logger.log(Level.INFO, 
-                       "Removing: " + path.toString());                          
+                       "Removing: " + path.toString());
                fs.delete(path, true);
            }
        }

@@ -27,10 +27,11 @@ function usage(){
   echo "  likelike TASK [PARAMETERS]"
   echo ""
   echo "where TASK is one of:"
-  echo "  lsh          run lsh."
-  echo "  validate     validate the result recommended pairs by lsh."
-  echo "  version      show version of oluolu."
-  echo "  help         show this message."
+  echo "  lsh                 run lsh."
+  echo "  validate            validate the result recommended pairs by lsh."
+  echo "  featureExtraction   extract features from related examples."
+  echo "  version             show version of Likelike."
+  echo "  help                show this message."
   echo ""
   echo "to get PARAMETERS information for each TASK:"
   echo "  likelike TASK -help"
@@ -67,8 +68,10 @@ this="$bin/$script"
 
 # setting variables                                                                                                                                                                 
 export LIKELIKE_HOME=`dirname "$this"`/..
-export LIKELIKE_EXAMPLE=$LIKELIKE_HOME/likelike-0.01-examples.jar
+export LIKELIKE_EXAMPLE=$LIKELIKE_HOME/likelike-0.2-examples.jar
 export LIKELIKE_DRIVER_CLASS='org.unigram.likelike.LikelikeDriver'
+export HADOOP_CLASSPATH=$LIKELIKE_HOME/likelike-0.2.jar:$LIKELIKE_HOME
+export CLASSPATH=$CLASSPATH:$HADOOP_CLASSPATH
 
 # exec                                                                                                                                                                              
 exec $HADOOP_HOME/bin/hadoop jar $LIKELIKE_EXAMPLE $LIKELIKE_DRIVER_CLASS $TASK $@

@@ -40,12 +40,12 @@ public class TestCalcHashValue extends TestCase {
     }
 
     public void testRun() {
-        CalcHashValue calcHash = new CalcHashValue(3349L); 
+        CalcHashValue calcHash = new CalcHashValue(); 
         
         /* test collision */
         Map<Long, Long>resultMap = new HashMap<Long, Long>();
         for (int i = 0; i<100000; i++) {
-            Long hashedValue = calcHash.run((long) i);
+            Long hashedValue = calcHash.run((long) i, 3349L);
             if (resultMap.containsKey(hashedValue)) {
                 fail("Collision keys!");
                 Long count = resultMap.get(hashedValue);
@@ -59,8 +59,6 @@ public class TestCalcHashValue extends TestCase {
         Set<Long>resultMapA = this.extractTopRanked(233L, 10000, 10); 
         Set<Long>resultMapB =  this.extractTopRanked(3L, 10000, 10);
         
-        System.out.println("resultMapA"+resultMapA.toString());
-        System.out.println("resultMapB"+resultMapB.toString());
         int collistionCount = 0;
         for (Long id : resultMapA) {
             if (resultMapB.contains(id)) {
@@ -73,12 +71,12 @@ public class TestCalcHashValue extends TestCase {
     
     private Set<Long> extractTopRanked(long hashSeed, 
             int size, int threshold) {
-        CalcHashValue calcHash = new CalcHashValue(hashSeed);
+        CalcHashValue calcHash = new CalcHashValue();
         TreeMap<Long,Long> hashedValues = new TreeMap<Long,Long>();
 
         for (int i=0; i<size; i++) {
             hashedValues.put(
-                    calcHash.run((long) i), 
+                    calcHash.run((long) i, hashSeed), 
                     (long) i);
         }
         
@@ -86,7 +84,6 @@ public class TestCalcHashValue extends TestCase {
         for (int i=0; i<threshold; i++) {
             Long hashedValue = hashedValues.lastKey();
             Long id = hashedValues.get(hashedValue);
-            System.out.println("added: "+id);
             rtSet.add(id);
             hashedValues.remove(hashedValue);
         }

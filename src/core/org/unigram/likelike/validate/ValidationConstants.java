@@ -1,5 +1,8 @@
 package org.unigram.likelike.validate;
 
+/**
+ *
+ */
 public class ValidationConstants {
     
     /** symbol: selector class name. */
