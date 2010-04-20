@@ -48,15 +48,42 @@
 		conf="common->default"/>
 	<dependency org="junit" 
 		name="junit" 
-		rev="3.8.1"
+		rev="4.6"
 		conf="common->default"/>
 	<dependency org="org.mockito" 
 		name="mockito-core" 
-		rev="1.8.0"
+		rev="1.8.2"
 		conf="common->default"/>
 	<dependency org="commons-collections"
 		name="commons-collections"
-		rev="2.1"/>
+		rev="3.0"
+		conf="common->default"/>
+
+	<dependency org="commons-pool" 
+		name="commons-pool" 
+		rev="1.5.4"
+		conf="common->default"/>
+	<dependency org="log4j" 
+		name="log4j" 
+		rev="1.2.14"
+		conf="common->default"/>		
+	<dependency org="org.perf4j" 
+		name="perf4j" 
+		rev="0.9.12"
+		conf="common->default"/>		
+	<dependency org="org.slf4j" 
+		name="slf4j-api" 
+		rev="1.5.8"
+		conf="common->default"/>
+	<dependency org="org.slf4j" 
+		name="slf4j-log4j12" 
+		rev="1.5.8"
+		conf="common->default"/>
+		
+	<dependency org="com.google.collections" 
+		name="google-collections" 
+		rev="1.0"
+		conf="common->default"/>				
   </dependencies>
 
 </ivy-module>

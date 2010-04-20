@@ -47,11 +47,11 @@ import org.unigram.likelike.common.SeedClusterId;
 /**
  * Extract recommendations for input examples. 
  */
-public class LSHRecommendations extends
+public abstract class LSHRecommendations extends
     Configured implements Tool {
     
     /** logger. */
-    private final LikelikeLogger logger 
+    protected final LikelikeLogger logger 
         = LikelikeLogger.getLogger();
 
     /** random generator. */
@@ -160,7 +160,7 @@ public class LSHRecommendations extends
      * @param counters contains counter
      * @param conf configuration
      */
-    private void setResultConf(final Counters counters, 
+    protected void setResultConf(final Counters counters, 
             final Configuration conf) {
         conf.setLong(LikelikeConstants.LIKELIKE_INPUT_RECORDS, 
                 counters.findCounter(
@@ -219,32 +219,10 @@ public class LSHRecommendations extends
      * @throws InterruptedException -
      * @throws ClassNotFoundException -
      */
-    private boolean getRecommendations(final String inputDir,
+    protected abstract boolean getRecommendations(final String inputDir,
             final String outputFile, final Configuration conf, 
-            final FileSystem fs) 
-    throws IOException, InterruptedException, 
-    ClassNotFoundException {
-        this.logger.logInfo("Extracting recommendation to " + inputDir);
-        Path inputPath = new Path(inputDir);
-        Path outputPath = new Path(outputFile);
-        FsUtil.checkPath(outputPath, FileSystem.get(conf));
-
-        Job job = new Job(conf);
-        job.setJarByClass(LSHRecommendations.class);
-        FileInputFormat.addInputPath(job, inputPath);
-        FileOutputFormat.setOutputPath(job, outputPath);
-        job.setMapperClass(GetRecommendationsMapper.class);
-        job.setReducerClass(GetRecommendationsReducer.class);
-        job.setMapOutputKeyClass(LongWritable.class);
-        job.setMapOutputValueClass(Candidate.class);
-        job.setOutputKeyClass(LongWritable.class);
-        job.setOutputValueClass(LongWritable.class);
-        job.setInputFormatClass(SequenceFileInputFormat.class);
-        job.setNumReduceTasks(conf.getInt(LikelikeConstants.NUMBER_OF_REDUCES,
-                LikelikeConstants.DEFAULT_NUMBER_OF_REDUCES));
-
-        return job.waitForCompletion(true);        
-    }
+            final FileSystem fs) throws IOException, InterruptedException, 
+            ClassNotFoundException; 
 
     /**
      * Extract clusters.
@@ -286,18 +264,6 @@ public class LSHRecommendations extends
         return result;
     }
 
-    /**
-     * Main method.
-     *
-     * @param args argument strings which contain input and output files
-     * @throws Exception -
-     */
-    public static void main(final String[] args)
-    throws Exception {
-        int exitCode = ToolRunner.run(
-                new LSHRecommendations(), args);
-        System.exit(exitCode);
-    }
 
     /**
      * Add configuration from xml files.
@@ -310,7 +276,7 @@ public class LSHRecommendations extends
     /**
      * Show parameters for FreqentNGramExtraction.
      */
-    private void showParameters() {
+    protected void showParameters() {
         System.out.println("Paramters:");
         System.out.println("    -input INPUT                " 
                 + "use INPUT as input resource");

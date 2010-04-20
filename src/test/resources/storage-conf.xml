@@ -1,0 +1,162 @@
+<Storage>
+  <ClusterName>Likelike Cluster</ClusterName>
+  <Keyspaces>
+      <Keyspace Name="Likelike">
+      <ColumnFamily CompareWith="UTF8Type" Name="RelatedPairs" />
+    </Keyspace>
+  </Keyspaces>
+
+  <Partitioner>org.apache.cassandra.dht.OrderPreservingPartitioner</Partitioner>
+
+  <InitialToken></InitialToken>
+
+  <EndPointSnitch>org.apache.cassandra.locator.EndPointSnitch</EndPointSnitch>
+
+  <ReplicaPlacementStrategy>org.apache.cassandra.locator.RackUnawareStrategy</ReplicaPlacementStrategy>
+
+  <ReplicationFactor>1</ReplicationFactor>
+
+  <CommitLogDirectory>tmp/var/lib/cassandra/commitlog</CommitLogDirectory>
+  <DataFileDirectories>
+      <DataFileDirectory>tmp/var/lib/cassandra/data</DataFileDirectory>
+  </DataFileDirectories>
+  <CalloutLocation>tmp/var/lib/cassandra/callouts</CalloutLocation>
+  <BootstrapFileDirectory>tmp/var/lib/cassandra/bootstrap</BootstrapFileDirectory>
+  <StagingFileDirectory>tmp/var/lib/cassandra/staging</StagingFileDirectory>
+
+
+  <Seeds>
+      <Seed>127.0.0.1</Seed>
+  </Seeds>
+
+
+  <!-- Time to wait for a reply from other nodes before failing the command -->
+  <RpcTimeoutInMillis>5000</RpcTimeoutInMillis>
+  <!-- Size to allow commitlog to grow to before creating a new segment -->
+  <CommitLogRotationThresholdInMB>128</CommitLogRotationThresholdInMB>
+
+
+  <ListenAddress>localhost</ListenAddress>
+  <!-- TCP port, for commands and data -->
+  <StoragePort>7000</StoragePort>
+  <!-- UDP port, for membership communications (gossip) -->
+  <ControlPort>7001</ControlPort>
+
+  <ThriftAddress>0.0.0.0</ThriftAddress>
+  <!-- Thrift RPC port (the port clients connect to). -->
+  <ThriftPort>9170</ThriftPort>
+  <ThriftFramedTransport>false</ThriftFramedTransport>
+
+
+  <!--======================================================================-->
+  <!-- Memory, Disk, and Performance                                        -->
+  <!--======================================================================-->
+
+  <!--
+   ~ Buffer size to use when performing contiguous column slices. Increase
+   ~ this to the size of the column slices you typically perform.
+   ~ (Name-based queries are performed with a buffer size of
+   ~ ColumnIndexSizeInKB.)
+  -->
+  <SlicedBufferSizeInKB>64</SlicedBufferSizeInKB>
+
+  <!--
+   ~ Buffer size to use when flushing memtables to disk. (Only one
+   ~ memtable is ever flushed at a time.) Increase (decrease) the index
+   ~ buffer size relative to the data buffer if you have few (many)
+   ~ columns per key.  Bigger is only better _if_ your memtables get large
+   ~ enough to use the space. (Check in your data directory after your
+   ~ app has been running long enough.) -->
+  <FlushDataBufferSizeInMB>32</FlushDataBufferSizeInMB>
+  <FlushIndexBufferSizeInMB>8</FlushIndexBufferSizeInMB>
+
+  <!--
+   ~ Add column indexes to a row after its contents reach this size.
+   ~ Increase if your column values are large, or if you have a very large
+   ~ number of columns.  The competing causes are, Cassandra has to
+   ~ deserialize this much of the row to read a single column, so you want
+   ~ it to be small - at least if you do many partial-row reads - but all
+   ~ the index data is read for each access, so you don't want to generate
+   ~ that wastefully either.
+  -->
+  <ColumnIndexSizeInKB>64</ColumnIndexSizeInKB>
+
+  <!--
+   ~ The maximum amount of data to store in memory per ColumnFamily before
+   ~ flushing to disk.  Note: There is one memtable per column family, and
+   ~ this threshold is based solely on the amount of data stored, not
+   ~ actual heap memory usage (there is some overhead in indexing the
+   ~ columns).
+  -->
+  <MemtableSizeInMB>64</MemtableSizeInMB>
+  <!--
+   ~ The maximum number of columns in millions to store in memory per
+   ~ ColumnFamily before flushing to disk.  This is also a per-memtable
+   ~ setting.  Use with MemtableSizeInMB to tune memory usage.
+  -->
+  <MemtableObjectCountInMillions>0.1</MemtableObjectCountInMillions>
+
+  <!--
+   ~ Unlike most systems, in Cassandra writes are faster than reads, so
+   ~ you can afford more of those in parallel.  A good rule of thumb is 2
+   ~ concurrent reads per processor core.  Increase ConcurrentWrites to
+   ~ the number of clients writing at once if you enable CommitLogSync +
+   ~ CommitLogSyncDelay. -->
+  <ConcurrentReads>8</ConcurrentReads>
+  <ConcurrentWrites>32</ConcurrentWrites>
+
+  <!--
+   ~ CommitLogSync may be either "periodic" or "batch."  When in batch
+   ~ mode, Cassandra won't ack writes until the commit log has been
+   ~ fsynced to disk.  It will wait up to CommitLogSyncBatchWindowInMS
+   ~ milliseconds for other writes, before performing the sync.
+
+   ~ This is less necessary in Cassandra than in traditional databases
+   ~ since replication reduces the odds of losing data from a failure
+   ~ after writing the log entry but before it actually reaches the disk.
+   ~ So the other option is "timed," where writes may be acked immediately
+   ~ and the CommitLog is simply synced every CommitLogSyncPeriodInMS
+   ~ milliseconds.
+  -->
+  <CommitLogSync>periodic</CommitLogSync>
+  <!--
+   ~ Interval at which to perform syncs of the CommitLog in periodic mode.
+   ~ Usually the default of 1000ms is fine; increase it only if the
+   ~ CommitLog PendingTasks backlog in jmx shows that you are frequently
+   ~ scheduling a second sync while the first has not yet been processed.
+  -->
+  <CommitLogSyncPeriodInMS>1000</CommitLogSyncPeriodInMS>
+  <!--
+   ~ Delay (in milliseconds) during which additional commit log entries
+   ~ may be written before fsync in batch mode.  This will increase
+   ~ latency slightly, but can vastly improve throughput where there are
+   ~ many writers.  Set to zero to disable (each entry will be synced
+   ~ individually).  Reasonable values range from a minimal 0.1 to 10 or
+   ~ even more if throughput matters more than latency.
+  -->
+  <!-- <CommitLogSyncBatchWindowInMS>1</CommitLogSyncBatchWindowInMS> -->
+
+  <!--
+   ~ Time to wait before garbage-collection deletion markers.  Set this to
+   ~ a large enough value that you are confident that the deletion marker
+   ~ will be propagated to all replicas by the time this many seconds has
+   ~ elapsed, even in the face of hardware failures.  The default value is
+   ~ ten days.
+  -->
+  <GCGraceSeconds>864000</GCGraceSeconds>
+
+  <!--
+   ~ Number of threads to run when flushing memtables to disk.  Set this to
+   ~ the number of disks you physically have in your machine allocated for DataDirectory * 2.
+   ~ If you are planning to use the Binary Memtable, its recommended to increase the max threads
+   ~ to maintain a higher quality of service while under load when normal memtables are flushing to disk.
+  -->
+  <FlushMinThreads>1</FlushMinThreads>
+  <FlushMaxThreads>1</FlushMaxThreads>
+
+  <!--
+   ~ The threshold size in megabytes the binary memtable must grow to, before it's submitted for flushing to disk.
+  -->
+  <BinaryMemtableSizeInMB>256</BinaryMemtableSizeInMB>
+
+</Storage>

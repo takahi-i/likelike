@@ -16,7 +16,9 @@
    limitations under the License.
 -->
 
-<project name="likelike" default="main" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="likelike" default="main" 
+	xmlns:ivy="antlib:org.apache.ivy.ant"
+	basedir=".">
 
 	<property name="version" value="0.2" />
 
@@ -26,6 +28,7 @@
 	<property name="package" value="likelike-${version}" />
 
 	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="testlib.dir" value="${basedir}/testlib" />
 	<property name="conf.dir" value="${basedir}/conf" />
 
 	<property name="src.dir" location="${basedir}/src" />
@@ -49,7 +52,8 @@
 	<property name="ivy.install.version" value="2.0.0-beta1" />
 	<property name="ivy.jar.file" value="${ivy.dir}/ivy.jar" />
 	<property name="build.ivy.dir" location="${test.build.dir}/ivy" />
-	<property name="ivy.artifact.retrieve.pattern" value="${ant.project.name}/[conf]/[artifact]-[revision].[ext]" />
+	<property name="ivy.artifact.retrieve.pattern" 
+			value="${ant.project.name}/[conf]/[artifact]-[revision].[ext]" />
 	<property name="ivy.lib.dir" value="${build.ivy.dir}/lib/${ant.project.name}" />
 	<property name="common.ivy.lib.dir" value="${ivy.lib.dir}/common" />
 	<property name="ivy.url" value="http://repo1.maven.org/maven2/org/apache/ivy/ivy" />
@@ -65,8 +69,19 @@
 		</fileset>
 		<path refid="ivy-common-classpath" />
 	</path>
+	
+	
+	<path id="test-classpath">
+		<path refid="classpath" />
+		<fileset dir="${testlib.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<pathelement location="${test.build.resource.dir}"/>
+	</path>	
+	
 
-	<target name="main" depends="init, compile, compress, examples-compress, test-run" description="Main target">
+	<target name="main" depends="init, compile, compress, examples-compress, test-run" 
+		description="Main target">
 		<echo>
 			Build the jar files.
 	    </echo>
@@ -88,7 +103,7 @@
 	</target>
 
 	<target name="compile" description="Compilation target">
-		<javac srcdir="${src.dir}" debug="on" includes="**/*.java" verbose="off" 
+		<javac srcdir="${core.src.dir}" debug="on" includes="**/*.java" verbose="off" 
 				classpathref="classpath" destdir="${core.build.dir}">
 			<compilerarg value="-Xlint:deprecation" />
 			<compilerarg value="-Xlint:unchecked" />
@@ -116,10 +131,16 @@
 	</target>
 
 	<target name="test-compile" depends="compress">
-		<javac srcdir="${test.src.dir}" debug="on" includes="**/*.java" verbose="off" classpathref="classpath" destdir="${test.build.dir}">
+		<javac srcdir="${test.src.dir}" 
+			includes="**/*.java" 
+			verbose="off" 
+			classpathref="test-classpath" destdir="${test.build.dir}">
 			<compilerarg value="-Xlint:deprecation" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
+		<copy todir="${test.build.resource.dir}">
+			<fileset file="${test.resource.dir}/*" />
+		</copy>
 	</target>
 
 	<target name="test-compress" depends="test-compile">
@@ -128,11 +149,10 @@
 	</target>
 
 	<target name="test-run" depends="test-compress" description="run test">
-		<copy todir="${test.build.resource.dir}">
-			<fileset dir="${test.resource.dir}" />
-		</copy>
-		<junit printsummary="true" errorProperty="test.failed" maxmemory="512m" failureProperty="test.failed" fork="${junit.fork}" dir="${basedir}" showoutput="true" haltonfailure="no">
-			<classpath refid="classpath" />
+		<junit printsummary="true" errorProperty="test.failed" maxmemory="512m" 
+			failureProperty="test.failed" fork="${junit.fork}" dir="${basedir}" 
+			showoutput="true" haltonfailure="no">
+			<classpath refid="test-classpath" />
 			<formatter type="xml" />
 			<batchtest fork="yes" todir="${reports.dir}">
 				<fileset dir="${test.build.dir}" includes="**/Test*.class" />
@@ -148,7 +168,8 @@
 	</target>
 
 	<target name="examples-compile" depends="compress">
-		<javac srcdir="${examples.src.dir}" debug="on" includes="**/*.java" verbose="off" classpathref="classpath" destdir="${examples.build.dir}">
+		<javac srcdir="${examples.src.dir}" debug="on" includes="**/*.java" 
+			verbose="off" classpathref="classpath" destdir="${examples.build.dir}">
 			<compilerarg value="-Xlint:deprecation" />
 			<compilerarg value="-Xlint:unchecked" />
 		</javac>
@@ -246,9 +267,8 @@
 	<target name="clean-all" depends="clean, clean-cache" description="Deletes all build products">
 		<delete dir="${ivy.jar.file}" />
 	</target>
-
-
-	<target name="checkstyle" depends="retrive-checkstyle" description="Run checkstyle">
+	                                   
+	<target name="checkstyle" depends="retrieve-checkstyle" description="Run checkstyle">
 		<taskdef resource="checkstyletask.properties">
 			<classpath refid="checkstyle-classpath" />
 		</taskdef>
@@ -258,7 +278,7 @@
 		</checkstyle>
 	</target>
 
-	<target name="retrive-checkstyle" depends="install-ivy, ivy-resolve-checkstyle">
+	<target name="retrieve-checkstyle" depends="install-ivy, ivy-resolve-checkstyle">
 		<ivy:retrieve pattern="${build.ivy.lib.dir}/${ivy.artifact.retrieve.pattern}" />
 		<ivy:cachepath pathid="checkstyle-classpath" conf="checkstyle" />
 	</target>

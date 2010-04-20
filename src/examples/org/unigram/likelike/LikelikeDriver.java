@@ -19,7 +19,7 @@ package org.unigram.likelike;
 import org.apache.hadoop.util.ProgramDriver;
 
 import org.unigram.likelike.feature.FeatureExtraction;
-import org.unigram.likelike.lsh.LSHRecommendations;
+import org.unigram.likelike.lsh.DFSLSHRecommendations;
 import org.unigram.likelike.validate.Validation;
 
 public final class LikelikeDriver {
@@ -33,7 +33,7 @@ public final class LikelikeDriver {
         int exitCode = -1;
         ProgramDriver pgd = new ProgramDriver();
         try {
-            pgd.addClass("lsh", LSHRecommendations.class,
+            pgd.addClass("lsh", DFSLSHRecommendations.class,
                     "create recommendations.");
             pgd.addClass("validate", Validation.class,
                     "validate the result recommended pairs " +
