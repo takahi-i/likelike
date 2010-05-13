@@ -50,8 +50,8 @@ public class TestDFSLSHRecommendations extends TestCase {
 
     
     public boolean runWithCheck(int depth, int iterate) {
-        String inputPath = "src/test/build/resources/testSmallInput.txt";
-        String outputPath = "src/test/build/outputLsh"; 
+        String inputPath  = "build/test/resources/testSmallInput.txt";
+        String outputPath = "build/test/outputLsh";         
         /* run lsh */
         String[] args = {"-input",  inputPath, 
                          "-output", outputPath,

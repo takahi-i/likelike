@@ -56,7 +56,7 @@ public class Validation extends Configured implements Tool {
         this.fs = FileSystem.get(conf);
 
         for (int i = 0; i < args.length; ++i) {
-            if ("-recommend".equals(args[i])) {
+            if ("-input".equals(args[i])) {
                 recommendDir = args[++i];
                 addedFeatureDir = recommendDir + ".feature";
             } else if ("-output".equals(args[i])) {
@@ -206,13 +206,19 @@ public class Validation extends Configured implements Tool {
      * Show parameters for FreqentNGramExtraction.
      */
     private void showParameters() {
+        System.out.println("Validate the output from LSH.");
+        System.out.println("");        
         System.out.println("Paramters:");
-        System.out.println("    -input INPUT                " 
-                + "use INPUT as input resource");
-        System.out.println("    -output OUTPUT              " 
+        System.out.println("    -input INPUT              " 
+                + "use INPUT as input resource (output file of lsh)");
+        System.out.println("    -output OUTPUT            " 
                 + "use OUTPUT as outupt prefix");
-        System.out.println("    [-help]                     "
-                + "show usage");
+        System.out.println("    -feature FEATURE          " 
+                + "use FEATURE as an input dir (input file of lsh)");        
+        System.out.println("    -threshold VALUE          " 
+                + "use VALUE as the threshold  to output pairs");        
+        System.out.println("    [-help]                   "
+                + "show this message");
     }    
         
     /**

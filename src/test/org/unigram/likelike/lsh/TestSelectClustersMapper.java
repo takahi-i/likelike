@@ -17,6 +17,9 @@
 package org.unigram.likelike.lsh;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,6 +30,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.unigram.likelike.common.LikelikeConstants;
+import org.unigram.likelike.common.RelatedUsersWritable;
 import org.unigram.likelike.common.SeedClusterId;
 import org.unigram.likelike.lsh.function.CalcHashValue;
 import org.unigram.likelike.lsh.function.MinWiseFunction;
@@ -47,13 +51,13 @@ public class TestSelectClustersMapper extends TestCase {
         CalcHashValue calcHash = new CalcHashValue();         
 
         SelectClustersMapper mapper = new SelectClustersMapper();        
-        Mapper<LongWritable, Text, SeedClusterId, LongWritable>.Context mock_context
+        Mapper<LongWritable, Text, SeedClusterId, RelatedUsersWritable>.Context mock_context
             = mock(Mapper.Context.class);
         mapper.setup(mock_context);
         
         /**/ 
         try {
-            Text value = new Text("327\t1:3 2:3 43:3 21:1");
+            Text value = new Text("327\t1 2 43 21");
             mapper.map(null, value, mock_context);
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,10 +80,12 @@ public class TestSelectClustersMapper extends TestCase {
          }         
          
          try {
+             
              verify(mock_context, times(1)).write(
-                     new SeedClusterId(this.HASH_SEED, hashedFeatureVector.firstKey()),
-                     new LongWritable(327));
+                     new SeedClusterId(this.HASH_SEED, hashedFeatureVector.firstKey()),                     
+                     new RelatedUsersWritable(new Long(327)));
          } catch (Exception e) {
+             e.printStackTrace();
              TestCase.fail();
          }  
         

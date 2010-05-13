@@ -16,8 +16,8 @@
  */
 package org.unigram.likelike.lsh.function;
 
-import java.util.Map;
 import java.util.TreeMap;
+import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
@@ -39,17 +39,12 @@ public class MinWiseFunction
      */
     @Override
     public LongWritable returnClusterId(
-        final Map<Long, Long> featureVector, final long seed) {
-        long clusterId = 0;
+            final Set<Long> featureVector, final long seed) {
         
         TreeMap<Long, Long> hashedFeatureVector 
-            = new TreeMap<Long, Long>(); // key: hashed, value: id
+            = this.createHashedVector(featureVector, seed);
         
-        for (Long key : featureVector.keySet()) {
-            hashedFeatureVector.put(this.calcHash.run(key, seed), 
-                        new Long(featureVector.get(key)));
-        }
-        
+        long clusterId = 0;
         for (int i = 0; i < this.depth; i++) {
             if (hashedFeatureVector.size() <= 0) {
                 return new LongWritable(clusterId);
@@ -58,7 +53,26 @@ public class MinWiseFunction
             clusterId += (minimum + (i * 13));
             hashedFeatureVector.remove(minimum);
         }
-        return new LongWritable(clusterId);        
+        return new LongWritable(clusterId);
+    }
+   
+    /**
+     * create hashed feature vector.
+     * 
+     * @param featureVector input
+     * @param seed hash seed
+     * @return hashed feature vector
+     */
+    TreeMap<Long, Long> createHashedVector(
+            final Set<Long> featureVector, final long seed) {
+        TreeMap<Long, Long> hashedFeatureVector 
+        = new TreeMap<Long, Long>(); // key: hashed feature-id, value: dummy
+    
+        for (Long key : featureVector) {
+            hashedFeatureVector.put(this.calcHash.run(key, seed), 
+                    key);
+        }
+        return hashedFeatureVector;
     }
     
     /**

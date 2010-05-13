@@ -140,9 +140,8 @@ public class ValidationReducer extends
         Map<Long, Long> rtMap = new HashMap<Long, Long>();
         String[] featureArray = featureStr.split(" ");
         for (int i=0; i<featureArray.length; i++) {
-            String[] segArray = featureArray[i].split(":");
-            rtMap.put(Long.parseLong(segArray[0]), 
-                    Long.parseLong(segArray[1]));
+            rtMap.put(Long.parseLong(featureArray[i]), 
+                    new Long(1));
         }
         return rtMap;
     }    

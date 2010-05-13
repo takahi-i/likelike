@@ -77,6 +77,7 @@ public final class LikelikeConstants {
     public static final String LIKELIKE_INPUT_RECORDS
         = "likelike.input.record";
 
+    /** version. */
     public static final float VERSION = 0.2F;    
     
     /** for safe. */

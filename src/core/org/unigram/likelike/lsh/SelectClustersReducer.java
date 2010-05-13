@@ -33,12 +33,12 @@ import org.unigram.likelike.common.SeedClusterId;
  * SelectClustersReducer. 
  */
 public class SelectClustersReducer extends
-        Reducer<SeedClusterId, LongWritable,
+        Reducer<SeedClusterId, RelatedUsersWritable,
         SeedClusterId, RelatedUsersWritable> {
     
     /**
      * Reduce.
-     * 
+     *
      * @param key cluster id
      * @param values user names
      * @param context -
@@ -47,28 +47,25 @@ public class SelectClustersReducer extends
      */
     @Override
     public void reduce(final SeedClusterId key,
-            final Iterable<LongWritable> values,
+            final Iterable<RelatedUsersWritable> values,
             final Context context)
             throws IOException, InterruptedException {
-        
-        List<LongWritable> ids 
+       
+        List<LongWritable> ids
             = new ArrayList<LongWritable>();
-        long clusterSize = 0;
-        for (LongWritable id : values) {
-            ids.add(new LongWritable(id.get()));
-            clusterSize += 1;
-            if (clusterSize >= this.maximumClusterSize) {
+
+        for (RelatedUsersWritable relatedUsers : values) {
+            List<LongWritable> tmpUsers = relatedUsers.getRelatedUsers();
+            ids.addAll(tmpUsers);
+            if (ids.size() >= this.maximumClusterSize) {
                 break;
             }
         }
-        
-        if (this.minimumClusterSize <= clusterSize) {
-            RelatedUsersWritable relatedUsers
-                = new RelatedUsersWritable(ids);
-                context.write(key, relatedUsers);
+        if (this.minimumClusterSize <= ids.size()) {
+            context.write(key, new RelatedUsersWritable(ids));
         }
     }
-    
+   
     /**
      * setup.
      * @param context -
@@ -80,16 +77,17 @@ public class SelectClustersReducer extends
             jc = new Configuration();
         }
         this.maximumClusterSize = jc.getLong(
-                LikelikeConstants.MAX_CLUSTER_SIZE , 
+                LikelikeConstants.MAX_CLUSTER_SIZE ,
                 LikelikeConstants.DEFAULT_MAX_CLUSTER_SIZE);
         this.minimumClusterSize = jc.getLong(
-                LikelikeConstants.MIN_CLUSTER_SIZE , 
+                LikelikeConstants.MIN_CLUSTER_SIZE ,
                 LikelikeConstants.DEFAULT_MIN_CLUSTER_SIZE);                
     }
-    
+   
     /** maximum number of examples in a cluster. */
     private long maximumClusterSize;
-    
+   
     /** minimum number of examples in a cluster. */    
     private long minimumClusterSize;
 }
+

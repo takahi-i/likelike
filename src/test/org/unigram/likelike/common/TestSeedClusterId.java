@@ -1,4 +1,4 @@
-package test.org.unigram.likelike.common;
+package org.unigram.likelike.common;
 
 import org.unigram.likelike.common.SeedClusterId;
 

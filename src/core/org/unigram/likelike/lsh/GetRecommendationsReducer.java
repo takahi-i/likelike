@@ -37,7 +37,7 @@ import org.unigram.likelike.common.LikelikeConstants;
 public class GetRecommendationsReducer extends
         Reducer<LongWritable, Candidate, 
         LongWritable, LongWritable> {
-
+    
     /**
      * reduce. 
      * @param key target
@@ -57,7 +57,7 @@ public class GetRecommendationsReducer extends
             Long tid = cand.getId().get();
             if (candidates.containsKey(tid)) {
                Double weight = candidates.get(tid);
-               weight += 1.0;
+               weight += 1.0; // not use the size of the cluster
                candidates.put(tid, weight);
             } else {
                 candidates.put(tid, 
@@ -72,15 +72,7 @@ public class GetRecommendationsReducer extends
         /* sort by value and then output */
         ArrayList<Map.Entry> array 
             = new ArrayList<Map.Entry>(candidates.entrySet());
-        Collections.sort(array, new Comparator<Object>(){
-            public int compare(final Object o1, final Object o2){
-                Map.Entry e1 =(Map.Entry)o1;
-                Map.Entry e2 =(Map.Entry)o2;
-                Double e1Value = (Double) e1.getValue();
-                Double e2Value = (Double) e2.getValue();
-                return (e2Value.compareTo(e1Value));
-            }
-        });
+        Collections.sort(array, this.comparator);
 
         Iterator it = array.iterator();
         int i = 0;
@@ -97,6 +89,9 @@ public class GetRecommendationsReducer extends
     /** maximum number of output per example. */
     private long maxOutputSize;
     
+    /** rank the reduced candidates with the comparator. */
+    private Comparator comparator;
+    
     /**
      * setup.
      * 
@@ -105,13 +100,25 @@ public class GetRecommendationsReducer extends
     @Override
     public final void setup(final Context context) {
         Configuration jc = null; 
+
         if (context == null) {
             jc = new Configuration();
         } else {
             jc = context.getConfiguration();
         }
+
         this.maxOutputSize = jc.getLong(
                 LikelikeConstants.MAX_OUTPUT_SIZE , 
                 LikelikeConstants.DEFAULT_MAX_OUTPUT_SIZE);
+        
+        this.comparator = new Comparator<Object>(){
+            public int compare(final Object o1, final Object o2){
+                Map.Entry e1 = (Map.Entry) o1;
+                Map.Entry e2 = (Map.Entry) o2;
+                Double e1Value = (Double) e1.getValue();
+                Double e2Value = (Double) e2.getValue();
+                return (e2Value.compareTo(e1Value));
+            }
+        };
     }    
 }

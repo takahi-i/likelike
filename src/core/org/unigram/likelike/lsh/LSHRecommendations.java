@@ -248,9 +248,10 @@ public abstract class LSHRecommendations extends
         FileInputFormat.addInputPath(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
         job.setMapperClass(SelectClustersMapper.class);
+        job.setCombinerClass(SelectClustersReducer.class);
         job.setReducerClass(SelectClustersReducer.class);
         job.setMapOutputKeyClass(SeedClusterId.class);
-        job.setMapOutputValueClass(LongWritable.class);
+        job.setMapOutputValueClass(RelatedUsersWritable.class);
         job.setOutputKeyClass(SeedClusterId.class);
         job.setOutputValueClass(RelatedUsersWritable.class);
         job.setOutputFormatClass(
@@ -277,13 +278,21 @@ public abstract class LSHRecommendations extends
      * Show parameters for FreqentNGramExtraction.
      */
     protected void showParameters() {
+        System.out.println("Extract related (or similar) examples.");
+        System.out.println("");             
         System.out.println("Paramters:");
-        System.out.println("    -input INPUT                " 
+        System.out.println("    -input    INPUT           " 
                 + "use INPUT as input resource");
-        System.out.println("    -output OUTPUT              " 
+        System.out.println("    -output   OUTPUT          " 
                 + "use OUTPUT as outupt prefix");
-        System.out.println("    [-help]                     "
-                + "show usage");
+        System.out.println("    [-depth   DEPTH]          " 
+                + "use DEPTH as size of concatinations (default 1)");        
+        System.out.println("    [-iterate  ITERATE]       " 
+                + "use ITERATE as the number of hash keys (default 1)");        
+        System.out.println("    [-maxRecommend  SIZE]     " 
+                + "use SIZE as the maximum number of recommendation "
+                + "for one example");        
+        System.out.println("    [-help]                   "
+                + "show this message");
     }    
-    
 }

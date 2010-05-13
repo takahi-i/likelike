@@ -89,7 +89,6 @@ public final class SeedClusterId
      * Compare this into given one.
      * 
      * @param that another SeedClusterId object
-     * @throw IOException -
      * @return -
      */
     @Override

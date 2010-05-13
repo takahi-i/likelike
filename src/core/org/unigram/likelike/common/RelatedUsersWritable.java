@@ -46,7 +46,18 @@ public class RelatedUsersWritable implements Writable {
     public RelatedUsersWritable(final List<LongWritable> users) {
         this.relatedUsers = users;
     }
-
+    
+    /**
+     * Constructor. 
+     * @param id related user id
+     */
+    public RelatedUsersWritable(final Long id) {
+        List<LongWritable> eid = 
+            new ArrayList<LongWritable>();
+        eid.add(new LongWritable(id));
+        this.relatedUsers = eid;
+    }
+    
     /**
      * Get related users.
      * @return set of related users
@@ -63,16 +74,17 @@ public class RelatedUsersWritable implements Writable {
      */
     @Override
     public void readFields(final DataInput in) throws IOException {
-        this.relatedUsers= new ArrayList<LongWritable>();
         try {
-            do {
+            int listSize = in.readInt();
+            this.relatedUsers= new ArrayList<LongWritable>(listSize);
+            for(int i=0; i<listSize; i++) {
                 long userID = in.readLong();
                 this.relatedUsers.add(new LongWritable(userID));
-            } while (true);
+            } 
         } catch (EOFException e) {
-            // do nothing
+            e.printStackTrace();
         } catch (ArrayIndexOutOfBoundsException e) {
-            // do nothing
+            e.printStackTrace();
         }
     }
 
@@ -83,6 +95,7 @@ public class RelatedUsersWritable implements Writable {
      */
     @Override
     public void write(final DataOutput out) throws IOException {
+        out.writeInt(this.relatedUsers.size());
         for (LongWritable item : this.relatedUsers) {
             out.writeLong(item.get());
         }
@@ -101,6 +114,29 @@ public class RelatedUsersWritable implements Writable {
             rtStr.append(' ');      
         }
         return rtStr.toString();
+    }
+    
+    /**
+     * equals.
+     * 
+     * @param o checked whether o is identical to this or not  
+     * @return true when o is identical to this, otherwise return true
+     */
+    @Override
+    public boolean equals(final Object o) {
+        if (o instanceof RelatedUsersWritable) {
+            RelatedUsersWritable that = (RelatedUsersWritable) o;
+            return (this.relatedUsers.equals(that.relatedUsers));
+        }
+        return false;
+    }
+    
+    /**
+     * hashCode.
+     * @return hash value
+     */
+    public int hashCode() {
+        return this.relatedUsers.hashCode();
     }
 
 }

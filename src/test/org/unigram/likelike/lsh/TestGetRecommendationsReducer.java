@@ -54,12 +54,16 @@ public class TestGetRecommendationsReducer extends TestCase {
             new Candidate(new LongWritable(2)  , new LongWritable(1000)),
             new Candidate(new LongWritable(1)  , new LongWritable(20)),
             new Candidate(new LongWritable(1)  , new LongWritable(254)),
+            new Candidate(new LongWritable(1)  , new LongWritable(83)),
             new Candidate(new LongWritable(3)  , new LongWritable(2534)),
             new Candidate(new LongWritable(4)  , new LongWritable(253)),
+            new Candidate(new LongWritable(4)  , new LongWritable(2)),            
             new Candidate(new LongWritable(5)  , new LongWritable(25)),
             new Candidate(new LongWritable(6)  , new LongWritable(25)),
+            new Candidate(new LongWritable(4)  , new LongWritable(85)),            
             new Candidate(new LongWritable(7)  , new LongWritable(25)),
             new Candidate(new LongWritable(8)  , new LongWritable(25)),
+            new Candidate(new LongWritable(3)  , new LongWritable(5)),
             new Candidate(new LongWritable(9)  , new LongWritable(25)),
             new Candidate(new LongWritable(10)  , new LongWritable(25)),
             new Candidate(new LongWritable(11)  , new LongWritable(25434)),
@@ -97,8 +101,8 @@ public class TestGetRecommendationsReducer extends TestCase {
              /* oder */
              InOrder inOrder = inOrder(mock_context);
              inOrder.verify(mock_context).write(key, new LongWritable(1));
-             //inOrder.verify(mock_context).write(key, new LongWritable(4));
-             //inOrder.verify(mock_context).write(key, new LongWritable(3));
+             inOrder.verify(mock_context).write(key, new LongWritable(4));
+             inOrder.verify(mock_context).write(key, new LongWritable(3));
              
          } catch (Exception e) {
              TestCase.fail();

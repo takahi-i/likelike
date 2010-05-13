@@ -25,17 +25,17 @@ abstract class RunWithCheck {
     
     public MultiHashMap run(double threshold) {
         String recommendPath 
-            = "src/test/build/resources/testSmallRecommend.txt";
+            = "build/test/resources/testSmallRecommend.txt";
         String featurePath   
-            = "src/test/build/resources/testSmallInput.txt";
+            = "build/test/resources/testSmallInput.txt";
         String outputPath    
-            = "src/test/build/outputValidation";
+            = "build/test/outputValidation";
         String thresholdStr 
             = Double.toString(threshold);
 
         /* run validation */
         String[] args = {
-                        "-recommend",  recommendPath, 
+                        "-input",  recommendPath, 
                         "-feature",  featurePath,
                         "-output", outputPath,
                         "-threshold", thresholdStr

@@ -61,7 +61,7 @@ public class FeatureExtraction  extends Configured
         this.fs = FileSystem.get(conf);
 
         for (int i = 0; i < args.length; ++i) {
-            if ("-recommend".equals(args[i])) {
+            if ("-input".equals(args[i])) {
                 recommendDir = args[++i];
                 inversedDir = recommendDir + ".inv";
                 addedFeatureDir = recommendDir + ".feature";
@@ -103,13 +103,13 @@ public class FeatureExtraction  extends Configured
            throws  IOException, InterruptedException, ClassNotFoundException {
         Path addedfeaturePath = new Path(addedFeatureDir);
         Path outputPath = new Path(outputDir);
-        //Path featurePath = new Path(featureDir);
+        Path featurePath = new Path(featureDir);
         FsUtil.checkPath(outputPath, this.fs);
         
         Job job = new Job(conf);
         job.setJarByClass(FeatureExtraction.class);
         FileInputFormat.addInputPath(job, addedfeaturePath);
-        //FileInputFormat.addInputPath(job, featurePath);
+        FileInputFormat.addInputPath(job, featurePath);
         FileOutputFormat.setOutputPath(job, outputPath);
         job.setMapperClass(FeatureExtractionMapper.class); 
         job.setReducerClass(FeatureExtractionReducer.class);
@@ -200,12 +200,14 @@ public class FeatureExtraction  extends Configured
      * Show parameters for FreqentNGramExtraction.
      */
     private void showParameters() {
+        System.out.println("Extract features from related examples.");
+        System.out.println("");
         System.out.println("Paramters:");
-        System.out.println("    -input INPUT                " 
-                + "use INPUT as input resource");
-        System.out.println("    -output OUTPUT              " 
+        System.out.println("    -input INPUT              " 
+                + "use INPUT as input resource (output file of lsh)");
+        System.out.println("    -output OUTPUT            " 
                 + "use OUTPUT as outupt prefix");
-        System.out.println("    [-help]                     "
+        System.out.println("    -feature FEATURE          " 
                 + "show usage");
     }
     

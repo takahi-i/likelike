@@ -39,21 +39,20 @@ public class TestAddFeatureReducer extends TestCase {
         super.setUp();
     }
 
-    public void testReduceSimeple() {
+    public void testReduceSimple() {
         AddFeatureReducer reducer = new AddFeatureReducer();
-        Reducer<LongWritable, Text, LongWritable, Text>.Context mock_context = mock(Reducer.Context.class);               
-
+        Reducer<LongWritable, Text, LongWritable, Text>.Context mock_context 
+            = mock(Reducer.Context.class);               
+        
         /* create input */
         LongWritable key = new LongWritable(42L);
         List<Text> values = Arrays.asList (
                 new Text("45"),
                 new Text("345"),
                 new Text("69434"),
-                new Text("43:1 32039:1 3904:1 493:1 9032:1"),                
+                new Text("43 32039 3904 493 9032"),                
                 new Text("9445"),
-                new Text("2346")
-                );
-        
+                new Text("2346"));
         try {
             reducer.reduce(key, (Iterable<Text>) values, mock_context);
         } catch (IOException e) {
@@ -68,7 +67,7 @@ public class TestAddFeatureReducer extends TestCase {
          }           
         
          /* validate the results */
-         Text value = new Text(key+"\t"+new String("43:1 32039:1 3904:1 493:1 9032:1"));
+         Text value = new Text(key+"\t"+new String("43 32039 3904 493 9032"));
          try {
              verify(mock_context, times(1)).write(new LongWritable(45), value);
              verify(mock_context, times(1)).write(new LongWritable(345), value);
@@ -83,7 +82,8 @@ public class TestAddFeatureReducer extends TestCase {
 
     public void testReduceNoFeature() {
         AddFeatureReducer reducer = new AddFeatureReducer();
-        Reducer<LongWritable, Text, LongWritable, Text>.Context mock_context = mock(Reducer.Context.class);               
+        Reducer<LongWritable, Text, LongWritable, Text>.Context mock_context 
+            = mock(Reducer.Context.class);               
         
         /* create input */
         LongWritable key = new LongWritable(42L);

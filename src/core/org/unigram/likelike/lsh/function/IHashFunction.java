@@ -16,7 +16,7 @@
  */
 package org.unigram.likelike.lsh.function;
 
-import java.util.Map;
+import java.util.Set;
 
 import org.apache.hadoop.io.LongWritable;
 
@@ -31,6 +31,6 @@ public interface IHashFunction {
      * @param seed hash seed
      * @return hashed value
      */
-    LongWritable returnClusterId(Map<Long, Long> featureVector, 
+    LongWritable returnClusterId(Set<Long> featureVector, 
             long seed);
 }

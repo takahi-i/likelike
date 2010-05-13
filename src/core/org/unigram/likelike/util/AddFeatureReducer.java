@@ -48,7 +48,7 @@ public class AddFeatureReducer extends
         Text rtValue = null;
         List<Long> candidates = new LinkedList<Long>();
         for (Text v : values) {
-            if (v.find(":") >= 0) { // feature
+            if (v.find(" ") >= 0) { // feature
                 rtValue = new Text(key+"\t"+v);
                 continue;
             }
@@ -56,14 +56,14 @@ public class AddFeatureReducer extends
         }
 
         /* output recommendations with target features */
-
         if (rtValue==null) {
             return;
         }
         
         for (Long v : candidates) {
             /* write with inverse key and value */ 
-            context.write(new LongWritable(v), rtValue);  // caution: inverse key (target) and value (candidate)
+            /* caution: inverse key (target) and value (candidate) */
+            context.write(new LongWritable(v), rtValue);  
         }
     }
 }
