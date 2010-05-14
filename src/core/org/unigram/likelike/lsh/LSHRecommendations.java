@@ -223,7 +223,7 @@ public class LSHRecommendations extends
      * @throws InterruptedException -
      * @throws ClassNotFoundException -
      */
-    private boolean getRecommendations(final String inputDir,
+    protected boolean getRecommendations(final String inputDir,
             final String outputFile, final Configuration conf, 
             final FileSystem fs) 
     throws IOException, InterruptedException, 

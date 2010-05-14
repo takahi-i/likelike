@@ -18,6 +18,7 @@ package org.unigram.likelike.lsh;
 
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -128,6 +129,15 @@ public class TestCassandraLSHRecommendations extends TestCase {
                 List<Column> cols  = 
                     keyspace.getSlice(key.toString(), clp, sp);
                 System.out.println("size of Column for " + key + "\t" + cols.size());
+                
+                Iterator itrHoge = cols.iterator();
+                while(itrHoge.hasNext()){
+                    Column c = (Column) itrHoge.next();
+                    
+                    System.out.println("\tvalue: " + new String(c.getValue()));
+                    System.out.println("\tname: " + new String(c.getName()));
+                   } 
+                
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;

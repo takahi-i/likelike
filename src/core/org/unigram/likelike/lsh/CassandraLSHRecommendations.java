@@ -62,6 +62,7 @@ public class CassandraLSHRecommendations extends
      * @throws InterruptedException -
      * @throws ClassNotFoundException -
      */
+    @Override
     protected boolean getRecommendations(final String inputDir,
             final String outputFile, final Configuration conf, 
             final FileSystem fs) 
