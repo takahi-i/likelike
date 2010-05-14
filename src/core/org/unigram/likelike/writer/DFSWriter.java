@@ -1,0 +1,17 @@
+package org.unigram.likelike.writer;
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.mapreduce.Reducer.Context;
+
+public class DFSWriter implements IWriter {
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public boolean write(Long key, Long value, Context context) throws Exception, InterruptedException, IOException {
+        context.write(new LongWritable(key), new LongWritable(value));
+        return true;
+    }
+
+}

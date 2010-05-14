@@ -30,6 +30,8 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 import org.unigram.likelike.common.Candidate;
 import org.unigram.likelike.common.LikelikeConstants;
+import org.unigram.likelike.writer.DFSWriter;
+import org.unigram.likelike.writer.IWriter;
 
 /**
  * Reducer implementation. Extract pairs related to each other.
@@ -81,7 +83,11 @@ public class GetRecommendationsReducer extends
                 return;
             }
             Map.Entry obj = (Map.Entry) it.next();
-            context.write(key, new LongWritable((Long)obj.getKey()));
+            try {
+                this.writer.write(key.get(), (Long) obj.getKey(), context);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             i += 1;
         }
     }
@@ -91,6 +97,9 @@ public class GetRecommendationsReducer extends
     
     /** rank the reduced candidates with the comparator. */
     private Comparator comparator;
+    
+    /** writer */
+    private IWriter writer;
     
     /**
      * setup.
@@ -120,5 +129,8 @@ public class GetRecommendationsReducer extends
                 return (e2Value.compareTo(e1Value));
             }
         };
+        
+        this.writer = new DFSWriter();
+        
     }    
 }
