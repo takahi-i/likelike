@@ -43,11 +43,15 @@ import org.unigram.likelike.common.LikelikeConstants;
 import org.unigram.likelike.common.LikelikeLogger;
 import org.unigram.likelike.common.RelatedUsersWritable;
 import org.unigram.likelike.common.SeedClusterId;
+import org.unigram.likelike.lsh.GetRecommendationsMapper;
+import org.unigram.likelike.lsh.GetRecommendationsReducer;
+import org.unigram.likelike.lsh.SelectClustersMapper;
+import org.unigram.likelike.lsh.SelectClustersReducer;
 
 /**
  * Extract recommendations for input examples. 
  */
-public abstract class LSHRecommendations extends
+public class LSHRecommendations extends
     Configured implements Tool {
     
     /** logger. */
@@ -219,10 +223,34 @@ public abstract class LSHRecommendations extends
      * @throws InterruptedException -
      * @throws ClassNotFoundException -
      */
-    protected abstract boolean getRecommendations(final String inputDir,
+    private boolean getRecommendations(final String inputDir,
             final String outputFile, final Configuration conf, 
-            final FileSystem fs) throws IOException, InterruptedException, 
-            ClassNotFoundException; 
+            final FileSystem fs) 
+    throws IOException, InterruptedException, 
+    ClassNotFoundException {
+        this.logger.logInfo("Extracting recommendation to " + inputDir);
+        Path inputPath = new Path(inputDir);
+        Path outputPath = new Path(outputFile);
+        FsUtil.checkPath(outputPath, FileSystem.get(conf));
+
+        Job job = new Job(conf);
+        job.setJarByClass(LSHRecommendations.class);
+        FileInputFormat.addInputPath(job, inputPath);
+        FileOutputFormat.setOutputPath(job, outputPath);
+        job.setMapperClass(GetRecommendationsMapper.class);
+        job.setReducerClass(GetRecommendationsReducer.class);
+        job.setMapOutputKeyClass(LongWritable.class);
+        job.setMapOutputValueClass(Candidate.class);
+        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputValueClass(LongWritable.class);
+        job.setInputFormatClass(SequenceFileInputFormat.class);
+        job.setNumReduceTasks(conf.getInt(LikelikeConstants.NUMBER_OF_REDUCES,
+                LikelikeConstants.DEFAULT_NUMBER_OF_REDUCES));
+
+        return job.waitForCompletion(true);        
+    }
+    
+    
 
     /**
      * Extract clusters.

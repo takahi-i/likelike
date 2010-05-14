@@ -34,13 +34,13 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.OutputLogFilter;
 
-import org.unigram.likelike.lsh.DFSLSHRecommendations;
+import org.unigram.likelike.lsh.LSHRecommendations;
 
 import junit.framework.TestCase;
 
-public class TestDFSLSHRecommendations extends TestCase {
+public class TestLSHRecommendations extends TestCase {
 
-    public TestDFSLSHRecommendations(String name) {
+    public TestLSHRecommendations(String name) {
         super(name);
     }
 
@@ -63,7 +63,7 @@ public class TestDFSLSHRecommendations extends TestCase {
         conf.set("fs.default.name", "file:///");
         conf.set("mapred.job.tracker", "local");
         
-        DFSLSHRecommendations job = new DFSLSHRecommendations();
+        LSHRecommendations job = new LSHRecommendations();
         
         try {
             job.run(args, conf);
