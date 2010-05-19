@@ -23,9 +23,20 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import me.prettyprint.cassandra.service.CassandraClient;
+import me.prettyprint.cassandra.service.CassandraClientPool;
+import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
+import me.prettyprint.cassandra.service.Keyspace;
+import me.prettyprint.cassandra.testutils.EmbeddedServerHelper;
+
+import org.apache.cassandra.service.Column;
+import org.apache.cassandra.service.ColumnParent;
+import org.apache.cassandra.service.SlicePredicate;
+import org.apache.cassandra.service.SliceRange;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.MultiHashMap;
 import org.apache.hadoop.conf.Configuration;
@@ -34,35 +45,80 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.OutputLogFilter;
 
+import org.unigram.likelike.common.LikelikeConstants;
 import org.unigram.likelike.lsh.LSHRecommendations;
 
 import junit.framework.TestCase;
 
 public class TestLSHRecommendations extends TestCase {
 
+   
     public TestLSHRecommendations(String name) {
         super(name);
     }
 
     protected void setUp() throws Exception {
         super.setUp();
+        embedded = new EmbeddedServerHelper();
+        embedded.setup();
+        
+        try {
+            this.pools = CassandraClientPoolFactory.INSTANCE.get();
+            this.client = pools.borrowClient("localhost", 9170);
+            this.keyspace = client.getKeyspace("Likelike",1,
+                                          CassandraClient.DEFAULT_FAILOVER_POLICY);
+        } catch (Exception e){
+            e.printStackTrace();
+        }        
+        
     }
-
     
-    public boolean runWithCheck(int depth, int iterate) {
-        String inputPath  = "build/test/resources/testSmallInput.txt";
-        String outputPath = "build/test/outputLsh";         
-        /* run lsh */
-        String[] args = {"-input",  inputPath, 
-                         "-output", outputPath,
-                         "-depth",  Integer.toString(depth),
-                         "-iterate", Integer.toString(iterate) 
-        };
-
+    protected void tearDown() throws IOException {
+        embedded.teardown();
+    }    
+    
+    
+    public boolean dfsRunWithCheck(int depth, int iterate) {
+        // settings 
         Configuration conf = new Configuration();
         conf.set("fs.default.name", "file:///");
         conf.set("mapred.job.tracker", "local");
         
+        // run
+        this.run(depth, iterate, LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER, conf);
+
+        /* check output */
+        try {
+            assertTrue(this.check(conf, new Path(this.outputPath + "/part-r-00000")));
+        } catch (IOException e) {
+            fail("Got IOException");
+            e.printStackTrace();
+        }
+        return true;
+    }
+    
+    public boolean cassandraRunWithCheck(int depth, int iterate) {
+        Configuration conf = new Configuration();
+        conf.set("fs.default.name", "file:///");
+        conf.set("mapred.job.tracker", "local");
+        
+        // run
+        if (this.run(depth, iterate, "org.unigram.likelike.writer.CassandraWriter", conf) == false) {
+            return false;
+        }
+        
+        assertTrue(this.checkCassandra(conf));
+        return true;
+    }
+
+    public boolean run(int depth, int iterate, String writer, Configuration conf) {
+        /* run lsh */
+        String[] args = {"-input",  this.inputPath, 
+                         "-output", new String(this.outputPath),
+                         "-depth",  Integer.toString(depth),
+                         "-iterate", Integer.toString(iterate) 
+        };
+        conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, writer);
         LSHRecommendations job = new LSHRecommendations();
         
         try {
@@ -72,34 +128,65 @@ public class TestLSHRecommendations extends TestCase {
             return false;
         }
         
-        /* check output */
-        try {
-            assertTrue(this.check(conf, new Path(outputPath)));
-        } catch (IOException e) {
-            fail("Got IOException");
-            e.printStackTrace();
-        }
-        
         return true;
     }
     
     public void testRun() {
-        assertTrue(this.runWithCheck(1, 1));
-        assertTrue(this.runWithCheck(1, 5));
-        assertTrue(this.runWithCheck(1, 10));
         
-        //assertTrue(this.runWithCheck(2, 1));
-        //assertTrue(this.runWithCheck(2, 5));
-        //assertTrue(this.runWithCheck(2, 10));
+        assertTrue(this.dfsRunWithCheck(1, 1));
+        assertTrue(this.dfsRunWithCheck(1, 5));
+        assertTrue(this.dfsRunWithCheck(1, 10));
+                
+        assertTrue(this.cassandraRunWithCheck(1, 1));
+        assertTrue(this.cassandraRunWithCheck(1, 5));
+        assertTrue(this.cassandraRunWithCheck(1, 10));
         
-        //assertTrue(this.runWithCheck(3, 1));
-        //assertTrue(this.runWithCheck(3, 5));
-        //assertTrue(this.runWithCheck(3, 10));
-        
-        /*TODO add tests for pareters such as minCluster */ 
-        return; 
     }
 
+    private boolean checkCassandra(Configuration conf) {
+        ColumnParent clp = new ColumnParent("RelatedPairs", null);
+        SliceRange sr = new SliceRange(new byte[0], 
+                new byte[0], false, 150);
+        SlicePredicate sp = new SlicePredicate(null, sr);
+        
+        Long keys[] = {0L, 1L, 2L, 3L, 7L, 8L};
+        MultiHashMap resultMap = new MultiHashMap();
+        for (int i =0; i<keys.length; i++) {
+            Long key = keys[i];
+            try {
+                List<Column> cols  = keyspace.getSlice(key.toString(), clp, sp);
+                System.out.println("key:" + key.toString() + "\tcols.size() = " + cols.size());
+                Iterator itrHoge = cols.iterator();
+                while(itrHoge.hasNext()){
+                    Column c = (Column) itrHoge.next();
+                    System.out.println("\tc.name: " + new String(c.name));
+                    resultMap.put(key, // target  
+                            Long.parseLong(new String(c.name)));                    
+                   }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            } 
+        }
+        
+        /* basic test cases */
+        Collection coll = (Collection) resultMap.get(new Long(0));
+        assertTrue(coll.size() >= 2 && coll.size() <= 4);
+        coll = (Collection) resultMap.get(new Long(1));
+        assertTrue(coll.size() >= 2 && coll.size() <= 4);
+        coll = (Collection) resultMap.get(new Long(2));
+        assertTrue(coll.size() >= 2 && coll.size() <= 4);
+        coll = (Collection) resultMap.get(new Long(3));
+        assertTrue(coll.size() >= 1 && coll.size() <= 3);
+        
+        /* examples with no recommendation */
+        assertFalse(resultMap.containsKey(new Long(7)));
+        assertFalse(resultMap.containsKey(new Long(8)));        
+        
+        return true;        
+    }
+    
+    
     private boolean check(Configuration conf, 
             Path outputPath) 
     throws IOException {
@@ -107,11 +194,11 @@ public class TestLSHRecommendations extends TestCase {
         Path[] outputFiles = FileUtil.stat2Paths(
             fs.listStatus(outputPath, new OutputLogFilter()));
 
-        if (outputFiles != null) {
-            TestCase.assertEquals(outputFiles.length, 1);
-        } else {
-            TestCase.fail();
-        }
+        //if (outputFiles != null) {
+        //    TestCase.assertEquals(outputFiles.length, 1);
+        //} else {
+        //    TestCase.fail();
+        //}
 
         BufferedReader reader = this.asBufferedReader(
                 fs.open(outputFiles[0]));        
@@ -145,6 +232,18 @@ public class TestLSHRecommendations extends TestCase {
     private BufferedReader asBufferedReader(final InputStream in)
     throws IOException {
         return new BufferedReader(new InputStreamReader(in));
-    }    
+    }
+    
+    private final String inputPath  = "build/test/resources/testSmallInput.txt";
+
+    private final String outputPath = "build/test/outputLsh";             
+
+    private static EmbeddedServerHelper embedded;
+
+    private CassandraClient client;
+    
+    private Keyspace keyspace;
+    
+    private CassandraClientPool pools;    
     
 }

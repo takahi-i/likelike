@@ -17,6 +17,8 @@
 package org.unigram.likelike.lsh;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -129,8 +131,30 @@ public class GetRecommendationsReducer extends
                 return (e2Value.compareTo(e1Value));
             }
         };
-        
-        this.writer = new DFSWriter(jc);
-        
+
+        // create writer
+        String writerClassName = 
+                LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER;
+        try {
+            writerClassName = 
+                    jc.get(LikelikeConstants.LIKELIKE_OUTPUT_WRITER,
+                    LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
+            Class<? extends IWriter> extractorClass = Class.forName(
+                    writerClassName).asSubclass(IWriter.class);
+            Constructor<? extends IWriter> constructor = extractorClass
+                    .getConstructor(Configuration.class);
+            this.writer = constructor.newInstance(jc);
+        } catch (NoSuchMethodException nsme) {
+            throw new RuntimeException(nsme);
+        } catch (ClassNotFoundException cnfe) {
+            throw new RuntimeException(cnfe);
+        } catch (InstantiationException ie) {
+            throw new RuntimeException(ie);
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException(iae);
+        } catch (InvocationTargetException ite) {
+            throw new RuntimeException(ite.getCause());
+        }
+
     }    
 }

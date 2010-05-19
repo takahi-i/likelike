@@ -52,6 +52,7 @@ public final class FsUtil {
             logger.log(Level.INFO, "Overiding: " + dir.toString());
             return fs.delete(dir, true);
         } else {
+            logger.log(Level.INFO, "No such file: " + dir.toString());
             return true;
         }
     }

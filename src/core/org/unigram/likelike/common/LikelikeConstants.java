@@ -76,6 +76,14 @@ public final class LikelikeConstants {
     /** symbol: number of input records. */
     public static final String LIKELIKE_INPUT_RECORDS
         = "likelike.input.record";
+    
+    /** symbol: output type. */
+    public static final String LIKELIKE_OUTPUT_WRITER
+    = "likelike.output.writer";
+    
+    /** default: output type. */
+    public static final String DEFAULT_LIKELIKE_OUTPUT_WRITER
+    = "org.unigram.likelike.writer.DFSWriter";
 
     /** version. */
     public static final float VERSION = 0.2F;    

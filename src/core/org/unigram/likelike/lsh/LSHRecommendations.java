@@ -120,7 +120,7 @@ public class LSHRecommendations extends
             } else if ("-help".equals(args[i])) {
                 this.showParameters();
                 return 0;
-            } 
+            }
         }
         
         this.setHashKeys(iterate, inputFile, conf);
@@ -231,7 +231,10 @@ public class LSHRecommendations extends
         this.logger.logInfo("Extracting recommendation to " + inputDir);
         Path inputPath = new Path(inputDir);
         Path outputPath = new Path(outputFile);
-        FsUtil.checkPath(outputPath, FileSystem.get(conf));
+        if (FsUtil.checkPath(outputPath, FileSystem.get(conf)) == false) {
+            this.logger.logInfo("failed to delete " + outputPath);
+            return false;
+        }
 
         Job job = new Job(conf);
         job.setJarByClass(LSHRecommendations.class);
