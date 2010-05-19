@@ -17,6 +17,7 @@ import static me.prettyprint.cassandra.utils.StringUtils.bytes;
 
 import org.apache.cassandra.service.ColumnPath;
 import org.apache.cassandra.service.InvalidRequestException;
+import org.apache.cassandra.service.NotFoundException;
 import org.apache.cassandra.service.TimedOutException;
 import org.apache.cassandra.service.UnavailableException;
 import org.apache.hadoop.conf.Configuration;
@@ -26,15 +27,13 @@ import org.apache.thrift.TException;
 
 import org.unigram.likelike.common.Candidate;
 import org.unigram.likelike.common.LikelikeConstants;
+import org.unigram.likelike.writer.CassandraWriter;
+import org.unigram.likelike.writer.IWriter;
 
 public class GetRecommendationsCassandraReducer extends
     Reducer<LongWritable, Candidate, LongWritable, LongWritable> {
 
-    public GetRecommendationsCassandraReducer() 
-        throws IllegalStateException, PoolExhaustedException, Exception {
-        this.pool = CassandraClientPoolFactory.INSTANCE.get();
-        this.client = pool.borrowClient("localhost", 9170); // TODO parameterize
-        this.ks = client.getKeyspace("Likelike"); 
+    private GetRecommendationsCassandraReducer() {
     }
     
     /**
@@ -82,6 +81,7 @@ public class GetRecommendationsCassandraReducer extends
         });
 
         Iterator it = array.iterator();
+
         int i = 0;
         while(it.hasNext()) {
             if (i >= this.maxOutputSize) {
@@ -89,10 +89,8 @@ public class GetRecommendationsCassandraReducer extends
             }
             Map.Entry obj = (Map.Entry) it.next();
             try {
-                ColumnPath cp =  new ColumnPath("RelatedPairs", null, 
-                        new Integer(i).toString().getBytes());                
-                this.ks.insert(key.toString(), cp,
-                        bytes(obj.getKey().toString()));
+                this.writer.write(key.get(), (Long) obj.getKey(), context);
+                
             } catch (InvalidRequestException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -105,17 +103,18 @@ public class GetRecommendationsCassandraReducer extends
             } catch (TimedOutException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
-            } 
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             i += 1; 
         }
     }
     
     /** maximum number of output per example. */
     private long maxOutputSize;
- 
-    private CassandraClientPool pool;
-    private CassandraClient client;
-    private Keyspace ks;
+  
+    /** writer */
+    private IWriter writer;
    
     /**
      * setup.
@@ -133,6 +132,16 @@ public class GetRecommendationsCassandraReducer extends
         this.maxOutputSize = jc.getLong(
                 LikelikeConstants.MAX_OUTPUT_SIZE , 
                 LikelikeConstants.DEFAULT_MAX_OUTPUT_SIZE);
+        try {
+            this.writer = new CassandraWriter(jc);
+        } catch (PoolExhaustedException e) {
+            e.printStackTrace();
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+ 
     }    
     
 }

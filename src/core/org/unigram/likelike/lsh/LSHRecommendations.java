@@ -322,5 +322,19 @@ public class LSHRecommendations extends
                 + "for one example");        
         System.out.println("    [-help]                   "
                 + "show this message");
+    }
+    
+    /**
+     * Main method.
+     *
+     * @param args argument strings which contain input and output files
+     * @throws Exception -
+     */
+    public static void main(final String[] args)
+    throws Exception {
+        int exitCode = ToolRunner.run(
+                new LSHRecommendations(), args);
+        System.exit(exitCode);
     }    
+    
 }

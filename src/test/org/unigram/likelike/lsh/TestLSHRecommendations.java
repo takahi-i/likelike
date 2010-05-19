@@ -126,7 +126,6 @@ public class TestLSHRecommendations extends TestCase {
         }
         
         /* basic test cases */
-        Set keys = resultMap.keySet();
         Collection coll = (Collection) resultMap.get(new Long(0));
         assertTrue(coll.size() >= 2 && coll.size() <= 4);
         coll = (Collection) resultMap.get(new Long(1));

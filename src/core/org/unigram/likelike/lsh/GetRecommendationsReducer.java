@@ -130,7 +130,7 @@ public class GetRecommendationsReducer extends
             }
         };
         
-        this.writer = new DFSWriter();
+        this.writer = new DFSWriter(jc);
         
     }    
 }

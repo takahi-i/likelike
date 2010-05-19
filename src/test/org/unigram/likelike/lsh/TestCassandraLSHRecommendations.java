@@ -18,9 +18,11 @@ package org.unigram.likelike.lsh;
 
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.CassandraClientPool;
@@ -37,6 +39,7 @@ import org.apache.cassandra.service.SlicePredicate;
 import org.apache.cassandra.service.SliceRange;
 import org.apache.cassandra.service.TimedOutException;
 import org.apache.cassandra.service.UnavailableException;
+import org.apache.commons.collections.MultiHashMap;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.thrift.TException;
@@ -122,27 +125,41 @@ public class TestCassandraLSHRecommendations extends TestCase {
                 new byte[0], false, 150);
         SlicePredicate sp = new SlicePredicate(null, sr);
         
-        Integer keys[] = {0, 1, 2, 3, 7};
+        Long keys[] = {0L, 1L, 2L, 3L, 7L, 8L};
+        MultiHashMap resultMap = new MultiHashMap();
         for (int i =0; i<keys.length; i++) {
-            Integer key = keys[i];
+            Long key = keys[i];
             try {
-                List<Column> cols  = 
-                    keyspace.getSlice(key.toString(), clp, sp);
-                System.out.println("size of Column for " + key + "\t" + cols.size());
-                
+                List<Column> cols  = keyspace.getSlice(key.toString(), clp, sp);
+                //System.out.println("size of Column for " + key + "\t" + cols.size());              
                 Iterator itrHoge = cols.iterator();
                 while(itrHoge.hasNext()){
                     Column c = (Column) itrHoge.next();
-                    
-                    System.out.println("\tvalue: " + new String(c.getValue()));
-                    System.out.println("\tname: " + new String(c.getName()));
-                   } 
-                
+                    resultMap.put(key, // target 
+                            Long.parseLong(new String(c.name)));                    
+                    //System.out.println("\tname: " + new String(c.getName()));
+                    //System.out.println("\tvalue: " + new String(c.getValue()));
+                   }
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             } 
         }
+        
+        /* basic test cases */
+        Collection coll = (Collection) resultMap.get(new Long(0));
+        assertTrue(coll.size() >= 2 && coll.size() <= 4);
+        coll = (Collection) resultMap.get(new Long(1));
+        assertTrue(coll.size() >= 2 && coll.size() <= 4);
+        coll = (Collection) resultMap.get(new Long(2));
+        assertTrue(coll.size() >= 2 && coll.size() <= 4);
+        coll = (Collection) resultMap.get(new Long(3));
+        assertTrue(coll.size() >= 1 && coll.size() <= 3);
+        
+        /* examples with no recommendation */
+        assertFalse(resultMap.containsKey(new Long(7)));
+        assertFalse(resultMap.containsKey(new Long(8)));        
+        
         return true;
     }
 
