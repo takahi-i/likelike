@@ -44,6 +44,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.OutputLogFilter;
+import org.apache.thrift.transport.TTransportException;
 
 import org.unigram.likelike.common.LikelikeConstants;
 import org.unigram.likelike.lsh.LSHRecommendations;
@@ -58,38 +59,25 @@ public class TestLSHRecommendations extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        super.setUp();
-        embedded = new EmbeddedServerHelper();
-        embedded.setup();
-        
-        try {
-            this.pools = CassandraClientPoolFactory.INSTANCE.get();
-            this.client = pools.borrowClient("localhost", 9170);
-            this.keyspace = client.getKeyspace("Likelike",1,
-                                          CassandraClient.DEFAULT_FAILOVER_POLICY);
-        } catch (Exception e){
-            e.printStackTrace();
-        }        
-        
+        super.setUp();        
     }
     
     protected void tearDown() throws IOException {
-        embedded.teardown();
     }    
     
     
     public boolean dfsRunWithCheck(int depth, int iterate) {
         // settings 
         Configuration conf = new Configuration();
-        conf.set("fs.default.name", "file:///");
+	conf.set("fs.default.name", "file:///");
         conf.set("mapred.job.tracker", "local");
-        
+
         // run
         this.run(depth, iterate, LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER, conf);
 
         /* check output */
         try {
-            assertTrue(this.check(conf, new Path(this.outputPath + "/part-r-00000")));
+            assertTrue(this.check(conf, new Path(this.outputPath)));
         } catch (IOException e) {
             fail("Got IOException");
             e.printStackTrace();
@@ -114,7 +102,7 @@ public class TestLSHRecommendations extends TestCase {
     public boolean run(int depth, int iterate, String writer, Configuration conf) {
         /* run lsh */
         String[] args = {"-input",  this.inputPath, 
-                         "-output", new String(this.outputPath),
+                         "-output", this.outputPath,
                          "-depth",  Integer.toString(depth),
                          "-iterate", Integer.toString(iterate) 
         };
@@ -127,7 +115,6 @@ public class TestLSHRecommendations extends TestCase {
             e.printStackTrace();
             return false;
         }
-        
         return true;
     }
     
@@ -136,10 +123,31 @@ public class TestLSHRecommendations extends TestCase {
         assertTrue(this.dfsRunWithCheck(1, 1));
         assertTrue(this.dfsRunWithCheck(1, 5));
         assertTrue(this.dfsRunWithCheck(1, 10));
-                
+        
+        
+        try {
+            embedded = new EmbeddedServerHelper();
+            embedded.setup();
+        } catch (TTransportException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            this.pools = CassandraClientPoolFactory.INSTANCE.get();
+            this.client = pools.borrowClient("localhost", 9170);
+            this.keyspace = client.getKeyspace("Likelike",1,
+                                          CassandraClient.DEFAULT_FAILOVER_POLICY);
+        } catch (Exception e){
+            e.printStackTrace();
+        }         
+        
         assertTrue(this.cassandraRunWithCheck(1, 1));
         assertTrue(this.cassandraRunWithCheck(1, 5));
         assertTrue(this.cassandraRunWithCheck(1, 10));
+        
+        embedded.teardown();
         
     }
 
@@ -234,9 +242,9 @@ public class TestLSHRecommendations extends TestCase {
         return new BufferedReader(new InputStreamReader(in));
     }
     
-    private final String inputPath  = "build/test/resources/testSmallInput.txt";
+    private String inputPath  = "build/test/resources/testSmallInput.txt";
 
-    private final String outputPath = "build/test/outputLsh";             
+    private String outputPath = "build/test/resources/outputLSH";
 
     private static EmbeddedServerHelper embedded;
 
