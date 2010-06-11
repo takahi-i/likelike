@@ -33,10 +33,10 @@ import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
 import me.prettyprint.cassandra.service.Keyspace;
 import me.prettyprint.cassandra.testutils.EmbeddedServerHelper;
 
-import org.apache.cassandra.service.Column;
-import org.apache.cassandra.service.ColumnParent;
-import org.apache.cassandra.service.SlicePredicate;
-import org.apache.cassandra.service.SliceRange;
+import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.ColumnParent;
+import org.apache.cassandra.thrift.SlicePredicate;
+import org.apache.cassandra.thrift.SliceRange;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.MultiHashMap;
 import org.apache.hadoop.conf.Configuration;
@@ -69,7 +69,7 @@ public class TestLSHRecommendations extends TestCase {
     public boolean dfsRunWithCheck(int depth, int iterate) {
         // settings 
         Configuration conf = new Configuration();
-	conf.set("fs.default.name", "file:///");
+        conf.set("fs.default.name", "file:///");
         conf.set("mapred.job.tracker", "local");
 
         // run
@@ -91,7 +91,8 @@ public class TestLSHRecommendations extends TestCase {
         conf.set("mapred.job.tracker", "local");
         
         // run
-        if (this.run(depth, iterate, "org.unigram.likelike.writer.CassandraWriter", conf) == false) {
+        if (this.run(depth, iterate, 
+        		"org.unigram.likelike.writer.CassandraWriter", conf) == false) {
             return false;
         }
         
@@ -137,8 +138,7 @@ public class TestLSHRecommendations extends TestCase {
         try {
             this.pools = CassandraClientPoolFactory.INSTANCE.get();
             this.client = pools.borrowClient("localhost", 9170);
-            this.keyspace = client.getKeyspace("Likelike",1,
-                                          CassandraClient.DEFAULT_FAILOVER_POLICY);
+            this.keyspace = client.getKeyspace("Likelike");
         } catch (Exception e){
             e.printStackTrace();
         }         
@@ -152,18 +152,20 @@ public class TestLSHRecommendations extends TestCase {
     }
 
     private boolean checkCassandra(Configuration conf) {
-        ColumnParent clp = new ColumnParent("RelatedPairs", null);
+        ColumnParent clp = new ColumnParent("RelatedPairs");
         SliceRange sr = new SliceRange(new byte[0], 
                 new byte[0], false, 150);
-        SlicePredicate sp = new SlicePredicate(null, sr);
+        SlicePredicate sp = new SlicePredicate();
+        sp.setSlice_range(sr);
         
         Long keys[] = {0L, 1L, 2L, 3L, 7L, 8L};
         MultiHashMap resultMap = new MultiHashMap();
         for (int i =0; i<keys.length; i++) {
             Long key = keys[i];
             try {
-                List<Column> cols  = keyspace.getSlice(key.toString(), clp, sp);
+            	List<Column> cols  = keyspace.getSlice(key.toString(), clp, sp);
                 System.out.println("key:" + key.toString() + "\tcols.size() = " + cols.size());
+                
                 Iterator itrHoge = cols.iterator();
                 while(itrHoge.hasNext()){
                     Column c = (Column) itrHoge.next();
