@@ -92,7 +92,7 @@ public class TestLSHRecommendations extends TestCase {
         
         // run
         if (this.run(depth, iterate, 
-        		"org.unigram.likelike.writer.CassandraWriter", conf) == false) {
+        		"org.unigram.likelike.util.accessor.writer.CassandraWriter", conf) == false) {
             return false;
         }
         

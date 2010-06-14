@@ -83,7 +83,7 @@ public final class LikelikeConstants {
     
     /** default: output type. */
     public static final String DEFAULT_LIKELIKE_OUTPUT_WRITER
-    = "org.unigram.likelike.writer.DFSWriter";
+    = "org.unigram.likelike.util.accessor.writer.DFSWriter";
 
     /** version. */
     public static final float VERSION = 0.2F;    

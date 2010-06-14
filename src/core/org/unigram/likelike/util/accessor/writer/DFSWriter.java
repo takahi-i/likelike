@@ -1,4 +1,4 @@
-package org.unigram.likelike.writer;
+package org.unigram.likelike.util.accessor.writer;
 
 import java.io.IOException;
 

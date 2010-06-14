@@ -1,4 +1,4 @@
-package org.unigram.likelike.writer;
+package org.unigram.likelike.util.accessor.writer;
 
 import me.prettyprint.cassandra.service.CassandraClient;
 import me.prettyprint.cassandra.service.CassandraClientPool;
@@ -42,7 +42,7 @@ public class CassandraWriter implements IWriter {
     	TimedOutException {
         ColumnPath cp =  new ColumnPath(this.columnFamily);
         cp.setColumn(value.toString().getBytes());
-        System.out.println("key: " + key + "\tvalue: " + value);
+        //System.out.println("key: " + key + "\tvalue: " + value);
         this.keySpace.insert(key.toString(), cp, new Long(1).toString().getBytes());       
         return true;
     }
