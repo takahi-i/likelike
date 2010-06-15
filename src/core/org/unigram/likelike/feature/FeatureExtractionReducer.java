@@ -97,7 +97,13 @@ public class FeatureExtractionReducer extends
             Map.Entry obj = (Map.Entry) it.next();
             Long feature = (Long) obj.getKey();
             if (!targetFeatures.containsKey(feature)) {
-            	context.write(target, new LongWritable(feature));
+            	System.out.println("target: " + target + "\tfeature: " + feature);
+            	try {
+					this.writer.write((Long) target.get(), feature, context);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
     }
