@@ -32,7 +32,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 import org.unigram.likelike.common.Candidate;
 import org.unigram.likelike.common.LikelikeConstants;
-import org.unigram.likelike.util.accessor.writer.IWriter;
+import org.unigram.likelike.util.accessor.IWriter;
 
 /**
  * Reducer implementation. Extract pairs related to each other.
