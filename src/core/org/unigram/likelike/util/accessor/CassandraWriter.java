@@ -25,12 +25,14 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 
 import org.apache.thrift.TException;
+import org.unigram.likelike.common.LikelikeConstants;
 
 public class CassandraWriter implements IWriter, IReader {
     
     public CassandraWriter(Configuration conf) 
     throws PoolExhaustedException, NotFoundException, Exception{
         super();
+        System.out.println("loaded CassandraWriter");
         this.pool = CassandraClientPoolFactory.INSTANCE.get();
         String cassandraHost = conf.get(CASSANDRA_SERVER_NAME, 
         		DEFAULT_CASSANDRA_SERVER_NAME);
@@ -40,8 +42,9 @@ public class CassandraWriter implements IWriter, IReader {
         String keySpaceName = conf.get(CASSANDRA_KEYSPACE_NAME, 
                 DEFAULT_CASSANDRA_KEYSPACE_NAME);
         this.keySpace = client.getKeyspace(keySpaceName);
-        String columnFamily = conf.get(CASSANDRA_COLUMNFAMILY_NAME, 
-                DEFAULT_CASSANDRA_COLUMNFAMILY_NAME);
+        String columnFamily = conf.get(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
+                LikelikeConstants.DEFAULT_CASSANDRA_COLUMNFAMILY_NAME);
+        System.out.println("columFaimily: " + columnFamily);
         this.columnFamily = columnFamily;
     }
 
@@ -102,14 +105,6 @@ public class CassandraWriter implements IWriter, IReader {
     /** default: output type. */
     public static final String DEFAULT_CASSANDRA_KEYSPACE_NAME
     = "Likelike";
-    
-    /** symbol: cassandra columnfamily name. */
-    public static final String CASSANDRA_COLUMNFAMILY_NAME
-    = "likelike.cassandra.columnfamily.name";    
-    
-    /** default: output type. */
-    public static final String DEFAULT_CASSANDRA_COLUMNFAMILY_NAME
-    = "RelatedPairs";
         
     private CassandraWriter() {}
     

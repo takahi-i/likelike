@@ -1,6 +1,8 @@
 package org.unigram.likelike.feature;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,18 +11,24 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.unigram.likelike.common.LikelikeConstants;
+import org.unigram.likelike.util.accessor.IWriter;
 
 /**
  *
  */
 public class FeatureExtractionReducer extends
-        Reducer<LongWritable, Text, LongWritable, Text> {
+        Reducer<LongWritable, Text, LongWritable, LongWritable> {
     
     /** max number of output features. */
     private int maxOutputSize = 10;
+
+    /** writer */
+    private IWriter writer;
     
     /* TODO refactoring */
     /**
@@ -89,15 +97,9 @@ public class FeatureExtractionReducer extends
             Map.Entry obj = (Map.Entry) it.next();
             Long feature = (Long) obj.getKey();
             if (!targetFeatures.containsKey(feature)) {
-                rtString.append(feature);
-                rtString.append(" ");
-                i+=1;
+            	context.write(target, new LongWritable(feature));
             }
         }
-        if (rtString.length() > 0) {
-            context.write(target, new Text(rtString.toString()));
-        }
-        
     }
     
     /**
@@ -114,5 +116,51 @@ public class FeatureExtractionReducer extends
                     new Long(1));
         }
         return rtMap;
-    }        
+    }
+    
+    /**
+     * setup.
+     * 
+     * @param context contains Configuration object to get settings
+     */
+    @Override
+    public final void setup(final Context context) {
+        Configuration jc = null;
+        
+        if (context == null) {
+            jc = new Configuration();
+        } else {
+            jc = context.getConfiguration();
+        }
+        
+      
+        // create writer
+        String writerClassName = 
+                LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER;
+        
+        jc.set(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
+        		LikelikeConstants.LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME);
+        
+        try {
+            writerClassName = 
+                    jc.get(LikelikeConstants.LIKELIKE_OUTPUT_WRITER,
+                    LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
+            Class<? extends IWriter> extractorClass = Class.forName(
+                    writerClassName).asSubclass(IWriter.class);
+            Constructor<? extends IWriter> constructor = extractorClass
+                    .getConstructor(Configuration.class);
+            this.writer = constructor.newInstance(jc);
+        } catch (NoSuchMethodException nsme) {
+            throw new RuntimeException(nsme);
+        } catch (ClassNotFoundException cnfe) {
+            throw new RuntimeException(cnfe);
+        } catch (InstantiationException ie) {
+            throw new RuntimeException(ie);
+        } catch (IllegalAccessException iae) {
+            throw new RuntimeException(iae);
+        } catch (InvocationTargetException ite) {
+            throw new RuntimeException(ite.getCause());
+        }        
+    }
+
 }

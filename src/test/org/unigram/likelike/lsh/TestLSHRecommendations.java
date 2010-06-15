@@ -152,7 +152,8 @@ public class TestLSHRecommendations extends TestCase {
     }
 
     private boolean checkCassandra(Configuration conf) {
-        ColumnParent clp = new ColumnParent("RelatedPairs");
+        ColumnParent clp = new ColumnParent(
+        		LikelikeConstants.LIKELIKE_CASSANDRA_LSH_COLUMNFAMILY_NAME);
         SliceRange sr = new SliceRange(new byte[0], 
                 new byte[0], false, 150);
         SlicePredicate sp = new SlicePredicate();

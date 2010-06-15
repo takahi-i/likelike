@@ -74,8 +74,7 @@ public class FeatureExtraction  extends Configured
                 this.showParameters();
                 return 0;
             } 
-        }
-        
+        }        
         this.inverse(recommendDir, inversedDir, conf);
         this.addFeatures(inversedDir, addedFeatureDir, featureDir, conf);
         this.relatedFeatureExtraction(addedFeatureDir, 
@@ -116,7 +115,7 @@ public class FeatureExtraction  extends Configured
         job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(LongWritable.class);
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(LongWritable.class);
         job.setNumReduceTasks(
                 conf.getInt(LikelikeConstants.NUMBER_OF_REDUCES,
                 LikelikeConstants.DEFAULT_NUMBER_OF_REDUCES));

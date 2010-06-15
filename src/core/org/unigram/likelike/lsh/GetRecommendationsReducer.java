@@ -134,6 +134,8 @@ public class GetRecommendationsReducer extends
         // create writer
         String writerClassName = 
                 LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER;
+        jc.set(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
+        		LikelikeConstants.LIKELIKE_CASSANDRA_LSH_COLUMNFAMILY_NAME);        
         try {
             writerClassName = 
                     jc.get(LikelikeConstants.LIKELIKE_OUTPUT_WRITER,

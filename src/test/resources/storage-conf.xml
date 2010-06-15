@@ -48,6 +48,7 @@
   <Keyspaces>
     <Keyspace Name="Likelike">
       <ColumnFamily CompareWith="UTF8Type" Name="RelatedPairs"/>
+      <ColumnFamily CompareWith="UTF8Type" Name="RecommendationItems"/>
       <ReplicaPlacementStrategy>org.apache.cassandra.locator.RackUnawareStrategy</ReplicaPlacementStrategy>
       <ReplicationFactor>1</ReplicationFactor>
       <EndPointSnitch>org.apache.cassandra.locator.EndPointSnitch</EndPointSnitch>

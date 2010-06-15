@@ -71,9 +71,12 @@ public class TestFeatureExtraction extends TestCase {
     }
     
     public boolean checkResults(MultiHashMap resultMap) {
+    	//System.out.println("running checkResults");
+    	
         Set keys = resultMap.keySet();
-
         assertTrue(keys.size() == 2);
+
+        //System.out.println("reultMap: " + resultMap);
         
         Collection coll = (Collection) resultMap.get(new Long(0));
         if (coll == null || coll.size() != 3) { return false; }
@@ -116,12 +119,8 @@ public class TestFeatureExtraction extends TestCase {
         MultiHashMap resultMap = new MultiHashMap();
         while ((line = reader.readLine()) != null) {
             String[] lineArray = line.split("\t");
-            String[] featureArray = lineArray[1].split(" ");
-            for (int i=0; i < featureArray.length; i++) {
                 resultMap.put(Long.parseLong(lineArray[0]),
-                        Long.parseLong(featureArray[i]));
-            }
-            
+                        Long.parseLong(lineArray[1]));
         }
         return resultMap;
     }    
