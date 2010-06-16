@@ -32,7 +32,6 @@ public class CassandraWriter implements IWriter, IReader {
     public CassandraWriter(Configuration conf) 
     throws PoolExhaustedException, NotFoundException, Exception{
         super();
-        System.out.println("loaded CassandraWriter");
         this.pool = CassandraClientPoolFactory.INSTANCE.get();
         String cassandraHost = conf.get(CASSANDRA_SERVER_NAME, 
         		DEFAULT_CASSANDRA_SERVER_NAME);
