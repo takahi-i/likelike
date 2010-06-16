@@ -73,7 +73,7 @@ public class TestLSHRecommendations extends TestCase {
         conf.set("mapred.job.tracker", "local");
 
         // run
-        this.run(depth, iterate, LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER, conf);
+        this.run(depth, iterate, "dfs", conf);
 
         /* check output */
         try {
@@ -92,7 +92,7 @@ public class TestLSHRecommendations extends TestCase {
         
         // run
         if (this.run(depth, iterate, 
-        		"org.unigram.likelike.util.accessor.cassandra.AccessRelatedExamples", conf) 
+        		"cassandra", conf) 
         		== false) {
             return false;
         }
@@ -105,9 +105,11 @@ public class TestLSHRecommendations extends TestCase {
         String[] args = {"-input",  this.inputPath, 
                          "-output", this.outputPath,
                          "-depth",  Integer.toString(depth),
-                         "-iterate", Integer.toString(iterate) 
+                         "-iterate", Integer.toString(iterate),
+                         "-storage", writer
+                         
         };
-        conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, writer);
+        
         LSHRecommendations job = new LSHRecommendations();
         
         try {

@@ -69,7 +69,7 @@ public class TestFeatureExtraction extends TestCase {
         conf.set("mapred.job.tracker", "local");
 
         // run
-        this.run("org.unigram.likelike.util.accessor.cassandra.AccessRecommendedFeatures"
+        this.run("cassandra"
         		, conf);
         
         /* check result */
@@ -111,7 +111,7 @@ public class TestFeatureExtraction extends TestCase {
         conf.set("mapred.job.tracker", "local");
 
         // run
-        this.run(LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER, conf);       
+        this.run("dfs", conf);       
     
         /* extract result*/
         MultiHashMap resultMap = null;
@@ -134,6 +134,7 @@ public class TestFeatureExtraction extends TestCase {
                  "-input",  this.recommendPath, 
                  "-feature", this.featurePath,
                  "-output", this.outputPath,
+                 "-storage", writer
          };
 
          conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, writer);         

@@ -84,7 +84,7 @@ public final class LikelikeConstants {
     /** default: output type. */
     public static final String DEFAULT_LIKELIKE_OUTPUT_WRITER
     = "org.unigram.likelike.util.accessor.DFSWriter";
-
+    
     /** symbol: cassandra columnfamily name. */
     public static final String CASSANDRA_COLUMNFAMILY_NAME
     = "likelike.cassandra.columnfamily.name";    
@@ -97,7 +97,7 @@ public final class LikelikeConstants {
     = "RelatedPairs";        
     
 	public static final String LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME 
-	= "RecommendationItems";    
+	= "RecommendationItems";
 
     /** version. */
     public static final float VERSION = 0.2F;	

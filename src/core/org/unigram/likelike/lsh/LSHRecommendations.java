@@ -61,6 +61,10 @@ public class LSHRecommendations extends
     /** random generator. */
     private final Random rand = new Random();
     
+    /** class name of cassandra accessor */ 
+    private final String cassandracassandraAccessor 
+    = "org.unigram.likelike.util.accessor.cassandra.AccessRelatedExamples"; 
+    
     /**
      * Run from ToolRunner.
      *  
@@ -117,6 +121,15 @@ public class LSHRecommendations extends
             } else if ("-maxRecommend".equals(args[i])) {
                 conf.setLong(LikelikeConstants.MAX_OUTPUT_SIZE, 
                         Long.parseLong(args[++i]));
+            } else if ("-storage".equals(args[i])) {
+            	String storageType = args[++i];
+            	if (storageType == "dfs") {
+            		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
+            				LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
+            	} else if  (storageType == "cassandra") {
+            		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
+            				this.cassandracassandraAccessor);            		
+            	}  
             } else if ("-help".equals(args[i])) {
                 this.showParameters();
                 return 0;
@@ -339,5 +352,6 @@ public class LSHRecommendations extends
                 new LSHRecommendations(), args);
         System.exit(exitCode);
     }    
+    
     
 }

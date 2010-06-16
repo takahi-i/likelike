@@ -73,7 +73,16 @@ public class FeatureExtraction  extends Configured
             } else if ("-help".equals(args[i])) {
                 this.showParameters();
                 return 0;
-            } 
+            } else if ("-storage".equals(args[i])) {
+            	String storageType = args[++i];
+            	if (storageType == "dfs") {
+            		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
+            				LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
+            	} else if  (storageType == "cassandra") {
+            		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
+            				this.cassandraAccessor);            		
+            	}  
+            }
         }        
         this.inverse(recommendDir, inversedDir, conf);
         this.addFeatures(inversedDir, addedFeatureDir, featureDir, conf);
@@ -225,5 +234,8 @@ public class FeatureExtraction  extends Configured
     
     /** file system.  */
     private FileSystem fs = null;
+    
+    private String cassandraAccessor 
+    = "org.unigram.likelike.util.accessor.cassandra.AccessRecommendedFeatures";
     
 }
