@@ -7,12 +7,11 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import me.prettyprint.cassandra.service.CassandraClient;
-import me.prettyprint.cassandra.service.CassandraClientPool;
 import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
-import me.prettyprint.cassandra.service.Keyspace;
+import me.prettyprint.cassandra.service.PoolExhaustedException;
 import me.prettyprint.cassandra.testutils.EmbeddedServerHelper;
 
 import org.apache.hadoop.conf.Configuration;
@@ -23,10 +22,12 @@ import org.apache.hadoop.mapred.OutputLogFilter;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ColumnParent;
+import org.apache.cassandra.thrift.NotFoundException;
 import org.apache.cassandra.thrift.SlicePredicate;
 import org.apache.cassandra.thrift.SliceRange;
 import org.apache.commons.collections.MultiHashMap;
 import org.unigram.likelike.common.LikelikeConstants;
+import org.unigram.likelike.util.accessor.CassandraWriter;
 
 import junit.framework.TestCase;
 
@@ -41,8 +42,10 @@ public class TestFeatureExtraction extends TestCase {
     }
     
     public void testRun() {
+    	// test with hadoop dfs
     	this.dfsRunWithCheck();
         
+    	// test with cassandra
         try {
             embedded = new EmbeddedServerHelper();
             embedded.setup();
@@ -51,15 +54,6 @@ public class TestFeatureExtraction extends TestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        
-        try {
-            this.pools = CassandraClientPoolFactory.INSTANCE.get();
-            this.client = pools.borrowClient("localhost", 9170);
-            this.keyspace = client.getKeyspace("Likelike");
-        } catch (Exception e){
-            e.printStackTrace();
-        }                
         
     	this.cassandraRunWithCheck();
     	
@@ -75,46 +69,51 @@ public class TestFeatureExtraction extends TestCase {
         // run
         this.run("org.unigram.likelike.util.accessor.CassandraWriter", conf);
         
-        
         /* check result */
-        assertTrue(this.checkCassandraResults());
+        assertTrue(this.checkCassandraResults(conf));
     }
     
-    private boolean checkCassandraResults() {
-        ColumnParent clp = new ColumnParent(
-        		LikelikeConstants.LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME);
-        
-        //System.out.println("Enter checkCassandraResult");
-        //System.out.println("columnfamily:" 
-        //		+ LikelikeConstants.LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME);
-        
-        SliceRange sr = new SliceRange(new byte[0], 
-                new byte[0], false, 150);
-        SlicePredicate sp = new SlicePredicate();
-        sp.setSlice_range(sr);
-            	
+    private boolean checkCassandraResults(Configuration conf) {
+
+    	conf.set(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
+    			LikelikeConstants.LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME);    	
+    	CassandraWriter accessor = null	;
+		try {
+			accessor = new CassandraWriter(conf);
+		} catch (PoolExhaustedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (NotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
         Long keys[] = {0L, 2L};
         MultiHashMap resultMap = new MultiHashMap();
         for (int i =0; i<keys.length; i++) {
             Long key = keys[i];
             try {
-            	List<Column> cols  = keyspace.getSlice(key.toString(), clp, sp);
-                System.out.println("key:" + key.toString() + "\tcols.size() = " + cols.size());
+            	Map<String, byte[]> cols  = accessor.read(key);
+                System.out.println("key:" + key.toString() 
+                		+ "\tcols.size() = " + cols.size());
                 
-                Iterator itrHoge = cols.iterator();
+                Iterator itrHoge = cols.keySet().iterator();
                 while(itrHoge.hasNext()){
-                    Column c = (Column) itrHoge.next();
-                    System.out.println("\tc.name: " + new String(c.name));
+                    String v = (String) itrHoge.next();
+                    System.out.println("\tvalue: " + v);
                     resultMap.put(key, // target  
-                            Long.parseLong(new String(c.name)));                    
+                            Long.parseLong(v));                    
                    }
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             } 
-        }        
+        }
         
-		return true;
+        return this.checkResults(resultMap);
 	}
 
 	public void dfsRunWithCheck() {
@@ -162,13 +161,9 @@ public class TestFeatureExtraction extends TestCase {
     }
     
     public boolean checkResults(MultiHashMap resultMap) {
-    	//System.out.println("running checkResults");
-    	
         Set keys = resultMap.keySet();
         assertTrue(keys.size() == 2);
 
-        //System.out.println("reultMap: " + resultMap);
-        
         Collection coll = (Collection) resultMap.get(new Long(0));
         if (coll == null || coll.size() != 3) { return false; }
         assertTrue(coll.contains(new Long(5)));
@@ -229,10 +224,6 @@ public class TestFeatureExtraction extends TestCase {
 
     private static EmbeddedServerHelper embedded;    
 
-    private CassandraClient client;
-    
-    private Keyspace keyspace;
-    
-    private CassandraClientPool pools;        
+    private CassandraWriter accessor;
     
 }

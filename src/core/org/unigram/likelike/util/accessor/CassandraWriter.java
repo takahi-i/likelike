@@ -43,8 +43,7 @@ public class CassandraWriter implements IWriter, IReader {
                 DEFAULT_CASSANDRA_KEYSPACE_NAME);
         this.keySpace = client.getKeyspace(keySpaceName);
         String columnFamily = conf.get(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
-                LikelikeConstants.DEFAULT_CASSANDRA_COLUMNFAMILY_NAME);
-        System.out.println("columFaimily: " + columnFamily);
+        		LikelikeConstants.DEFAULT_CASSANDRA_COLUMNFAMILY_NAME);
         this.columnFamily = columnFamily;
     }
 
