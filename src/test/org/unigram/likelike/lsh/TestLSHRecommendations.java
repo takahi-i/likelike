@@ -47,6 +47,7 @@ import org.apache.thrift.transport.TTransportException;
 import org.unigram.likelike.common.LikelikeConstants;
 import org.unigram.likelike.lsh.LSHRecommendations;
 import org.unigram.likelike.util.accessor.CassandraWriter;
+import org.unigram.likelike.util.accessor.cassandra.AccessRelatedExamples;
 
 import junit.framework.TestCase;
 
@@ -91,7 +92,8 @@ public class TestLSHRecommendations extends TestCase {
         
         // run
         if (this.run(depth, iterate, 
-        		"org.unigram.likelike.util.accessor.CassandraWriter", conf) == false) {
+        		"org.unigram.likelike.util.accessor.cassandra.AccessRelatedExamples", conf) 
+        		== false) {
             return false;
         }
         this.cassandraCheck(conf);
@@ -159,23 +161,10 @@ public class TestLSHRecommendations extends TestCase {
     }
 
     private boolean cassandraCheck(Configuration conf) {
-    	conf.set(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
-        		LikelikeConstants.LIKELIKE_CASSANDRA_LSH_COLUMNFAMILY_NAME);
     	
-    	CassandraWriter accessor = null	;
-		try {
-			accessor = new CassandraWriter(conf);
-		} catch (PoolExhaustedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        
+    	AccessRelatedExamples accessor = null	;
+    	accessor = new AccessRelatedExamples(conf);
+
         Long keys[] = {0L, 1L, 2L, 3L, 7L, 8L};
         MultiHashMap resultMap = new MultiHashMap();
         for (int i =0; i<keys.length; i++) {

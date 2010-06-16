@@ -15,7 +15,6 @@ import org.unigram.likelike.util.accessor.IWriter;
 public class AccessRecommendedFeatures implements IReader, IWriter {
 	
 	public AccessRecommendedFeatures(Configuration conf) {
-		super();
         conf.set(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
         		LikelikeConstants.LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME);        
 		try {
@@ -31,7 +30,7 @@ public class AccessRecommendedFeatures implements IReader, IWriter {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public Map<String, byte[]> read(Long key) throws Exception,
 			InterruptedException {
@@ -43,8 +42,9 @@ public class AccessRecommendedFeatures implements IReader, IWriter {
 			throws Exception, InterruptedException {
 		return this.writer.write(key, value, context);
 	}
-	
-	private CassandraWriter writer;
-	
 
+	private AccessRecommendedFeatures() {
+		// for safe
+	}
+	private CassandraWriter writer;
 }

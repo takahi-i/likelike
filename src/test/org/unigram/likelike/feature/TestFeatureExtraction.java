@@ -28,6 +28,8 @@ import org.apache.cassandra.thrift.SliceRange;
 import org.apache.commons.collections.MultiHashMap;
 import org.unigram.likelike.common.LikelikeConstants;
 import org.unigram.likelike.util.accessor.CassandraWriter;
+import org.unigram.likelike.util.accessor.IWriter;
+import org.unigram.likelike.util.accessor.cassandra.AccessRecommendedFeatures;
 
 import junit.framework.TestCase;
 
@@ -67,30 +69,16 @@ public class TestFeatureExtraction extends TestCase {
         conf.set("mapred.job.tracker", "local");
 
         // run
-        this.run("org.unigram.likelike.util.accessor.CassandraWriter", conf);
+        this.run("org.unigram.likelike.util.accessor.cassandra.AccessRecommendedFeatures"
+        		, conf);
         
         /* check result */
         assertTrue(this.checkCassandraResults(conf));
     }
     
-    private boolean checkCassandraResults(Configuration conf) {
+	private boolean checkCassandraResults(Configuration conf) {
 
-    	conf.set(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
-    			LikelikeConstants.LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME);    	
-    	CassandraWriter accessor = null	;
-		try {
-			accessor = new CassandraWriter(conf);
-		} catch (PoolExhaustedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
+		AccessRecommendedFeatures accessor = new AccessRecommendedFeatures(conf);
         Long keys[] = {0L, 2L};
         MultiHashMap resultMap = new MultiHashMap();
         for (int i =0; i<keys.length; i++) {
@@ -223,7 +211,5 @@ public class TestFeatureExtraction extends TestCase {
     private String outputPath = "build/test/outputFeatureExtraction";    
 
     private static EmbeddedServerHelper embedded;    
-
-    private CassandraWriter accessor;
     
 }

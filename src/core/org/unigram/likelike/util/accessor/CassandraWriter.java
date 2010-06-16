@@ -31,7 +31,6 @@ public class CassandraWriter implements IWriter, IReader {
     
     public CassandraWriter(Configuration conf) 
     throws PoolExhaustedException, NotFoundException, Exception{
-        super();
         this.pool = CassandraClientPoolFactory.INSTANCE.get();
         String cassandraHost = conf.get(CASSANDRA_SERVER_NAME, 
         		DEFAULT_CASSANDRA_SERVER_NAME);
@@ -52,7 +51,7 @@ public class CassandraWriter implements IWriter, IReader {
         ColumnPath cp =  new ColumnPath(this.columnFamily);
         cp.setColumn(value.toString().getBytes());
         this.keySpace.insert(key.toString(), 
-        		cp, new Long(1).toString().getBytes());       
+        		cp, new Long(1).toString().getBytes());
         return true;
     }
     
