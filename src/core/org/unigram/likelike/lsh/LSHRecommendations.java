@@ -62,7 +62,7 @@ public class LSHRecommendations extends
     private final Random rand = new Random();
     
     /** class name of cassandra accessor */ 
-    private final String cassandracassandraAccessor 
+    private final String cassandraAccessor 
     = "org.unigram.likelike.util.accessor.cassandra.AccessRelatedExamples"; 
     
     /**
@@ -128,7 +128,7 @@ public class LSHRecommendations extends
             				LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
             	} else if  (storageType == "cassandra") {
             		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
-            				this.cassandracassandraAccessor);            		
+            				this.cassandraAccessor);            		
             	}  
             } else if ("-help".equals(args[i])) {
                 this.showParameters();
