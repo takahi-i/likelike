@@ -123,10 +123,10 @@ public class LSHRecommendations extends
                         Long.parseLong(args[++i]));
             } else if ("-storage".equals(args[i])) {
             	String storageType = args[++i];
-            	if (storageType == "dfs") {
+            	if (storageType.equals("dfs")) {
             		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
             				LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
-            	} else if  (storageType == "cassandra") {
+            	} else if  (storageType.equals("cassandra")) {
             		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
             				this.cassandraAccessor);            		
             	}  
