@@ -5,13 +5,13 @@
   <parent>
     <artifactId>likelike</artifactId>
     <groupId>org.unigram</groupId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
   </parent>
   <groupId>org.unigram</groupId>
   <artifactId>webapp</artifactId>
   <version>0.2-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>webapp Maven Webapp</name>
+  <name>likelike webapps</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>

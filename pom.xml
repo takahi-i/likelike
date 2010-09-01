@@ -4,7 +4,7 @@
   <groupId>org.unigram</groupId>
   <artifactId>likelike</artifactId>
   <packaging>pom</packaging>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <name>likelike Multi Project</name>
   <url>http://maven.apache.org</url>
   <build>
