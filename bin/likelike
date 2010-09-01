@@ -18,7 +18,7 @@
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
-function usage(){
+usage() {
   echo "Likelike: A LSH implementation with MapReduce"
   echo ""
   echo "Copyright(C) 2009 Takahiko Ito"
@@ -67,10 +67,10 @@ this="$bin/$script"
 
 # setting variables                                                                                                                                                                 
 export LIKELIKE_HOME=`dirname "$this"`/..
-export LIKELIKE_EXAMPLE=$LIKELIKE_HOME/likelike-0.1-examples.jar
+export LIKELIKE_EXAMPLE=$LIKELIKE_HOME/examples/target/examples-0.2-SNAPSHOT.jar
 export LIKELIKE_DRIVER_CLASS='org.unigram.likelike.LikelikeDriver'
-export HADOOP_CLASSPATH=$LIKELIKE_HOME/likelike-0.1.jar:$LIKELIKE_HOME
-
+export CLASSPATH=$CLASS_PATH:$LIKELIKE_HOME/core/target/core-0.2-SNAPSHOT.jar:$LIKELIKE_HOME
+export HADOOP_CLASSPATH=$CLASS_PATH
 # exec                                                                                                                                                                              
 exec $HADOOP_HOME/bin/hadoop jar $LIKELIKE_EXAMPLE $LIKELIKE_DRIVER_CLASS $TASK $@
 
