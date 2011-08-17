@@ -6,7 +6,7 @@
 	<artifactId>likelike</artifactId>
 	<packaging>pom</packaging>
 	<version>0.3-SNAPSHOT</version>
-	<name>likelike Multi Project</name>
+	<name>likelike</name>
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>
@@ -16,29 +16,68 @@
 				<version>2.4.3</version>
 				<executions>
 					<execution>
-						<id>assemble resources</id>
+						<id>create conf</id>
 						<phase>install</phase>
+						<inherited>false</inherited>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/resources</outputDirectory>
+							<outputDirectory>${basedir}/target/conf</outputDirectory>
 							<resources>
 								<resource>
-									<directory>core/src/test/resources</directory>
+									<directory>distribution/src/main/resources/conf</directory>
 									<filtering>true</filtering>
 								</resource>
 							</resources>
 						</configuration>
 					</execution>
+					<execution>
+						<id>assemble bin</id>
+						<phase>install</phase>
+						<inherited>false</inherited>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/bin</outputDirectory>
+							<resources>
+								<resource>
+									<directory>distribution/src/main/resources/bin</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>assemble lib</id>
+						<phase>install</phase>
+						<inherited>false</inherited>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/lib</outputDirectory>
+							<resources>
+								<resource>
+									<directory>core/target</directory>
+									<filtering>true</filtering>
+									<includes>
+									  <include>**/*.jar</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>examples/target</directory>
+									<filtering>true</filtering>
+									<includes>
+									  <include>**/*.jar</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptor>src/main/assembly/executable.xml</descriptor>
-				</configuration>
+				<inherited>false</inherited>
 			</plugin>
 		</plugins>
 	</build>
@@ -141,9 +180,14 @@
 			<type>jar</type>
 		</dependency>
 	</dependencies>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<modules>
 		<module>core</module>
 		<module>examples</module>
 		<module>webapp</module>
+		<module>distribution</module>
 	</modules>
 </project>
+

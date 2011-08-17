@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.unigram</groupId>
   <name>likelike core</name>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <artifactId>core</artifactId>
   <url>http://maven.apache.org</url>
   <properties>
