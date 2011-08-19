@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# this script run likelike example                                                                                              
+# this script runs likelike example
 
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
@@ -48,7 +48,7 @@ if [ ${TASK} == "-help" ] || [ ${TASK} == "help" ] || [ ${TASK} == "-h" ]; then
   exit 1
 fi
 
-# get absolute path                                                                                                                                                                 
+# get absolute path
 this="$0"
 while [ -h "$this" ]; do
   ls=`ls -ld "$this"`
@@ -65,12 +65,24 @@ script=`basename "$this"`
 bin=`cd "$bin"; pwd`
 this="$bin/$script"
 
-# setting variables                                                                                                                                                                 
+# setting variables
 export LIKELIKE_HOME=`dirname "$this"`/..
-export LIKELIKE_EXAMPLE=$LIKELIKE_HOME/examples/target/examples-0.2-SNAPSHOT.jar
+
+# add example jars
+for f in $LIKELIKE_HOME/lib/examples-*.jar; do
+    LIKELIKE_EXAMPLE=$f
+done
+
+# add jars
+for f in $LIKELIKE_HOME/lib/*.jar; do
+    CLASSPATH=$CLASSPATH:$f
+done
+
+export HADOOP_CLASSPATH=$CLASSPATH
 export LIKELIKE_DRIVER_CLASS='org.unigram.likelike.LikelikeDriver'
-export CLASSPATH=$CLASS_PATH:$LIKELIKE_HOME/core/target/core-0.2-SNAPSHOT.jar:$LIKELIKE_HOME
-export HADOOP_CLASSPATH=$CLASS_PATH
-# exec                                                                                                                                                                              
+
+# exec
 exec $HADOOP_HOME/bin/hadoop jar $LIKELIKE_EXAMPLE $LIKELIKE_DRIVER_CLASS $TASK $@
+
+#
 

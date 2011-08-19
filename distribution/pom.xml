@@ -27,7 +27,7 @@
 							<resources>
 								<resource>
 									<directory>src/main/resources/conf</directory>
-									<filtering>true</filtering>
+									<filtering>false</filtering>
 								</resource>
 							</resources>
 						</configuration>
@@ -43,7 +43,7 @@
 							<resources>
 								<resource>
 									<directory>src/main/resources/bin</directory>
-									<filtering>true</filtering>
+									<filtering>false</filtering>
 								</resource>
 							</resources>
 						</configuration>
@@ -59,14 +59,14 @@
 							<resources>
 								<resource>
 									<directory>../core/target</directory>
-									<filtering>true</filtering>
+									<filtering>false</filtering>
 									<includes>
 									  <include>**/*.jar</include>
 									</includes>
 								</resource>
 								<resource>
 									<directory>../examples/target</directory>
-									<filtering>true</filtering>
+									<filtering>false</filtering>
 									<includes>
 									  <include>**/*.jar</include>
 									</includes>
