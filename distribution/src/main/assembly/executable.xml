@@ -1,0 +1,37 @@
+<assembly>
+  <id>assembled</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <directory>../core/target</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>core-*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>../examples/target</directory>
+      <outputDirectory>/lib</outputDirectory>
+      <includes>
+        <include>examples-*.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/resources</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>bin/*</include>
+        <include>conf/*</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+<!--   <dependencySets> -->
+<!--     <dependencySet> -->
+<!--       <unpack>false</unpack> -->
+<!--       <scope>runtime</scope> -->
+<!--       <outputDirectory>/</outputDirectory> -->
+<!--     </dependencySet> -->
+<!--   </dependencySets> -->
+</assembly>
