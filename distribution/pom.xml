@@ -8,6 +8,8 @@
 	</parent>
 
 	<url>http://maven.apache.org</url>
+	<organization>
+	</organization>
 	<build>
 		<finalName>likelike-${project.version}</finalName>
 		<plugins>
@@ -61,14 +63,14 @@
 									<directory>../core/target</directory>
 									<filtering>false</filtering>
 									<includes>
-									  <include>**/*.jar</include>
+										<include>**/*.jar</include>
 									</includes>
 								</resource>
 								<resource>
 									<directory>../examples/target</directory>
 									<filtering>false</filtering>
 									<includes>
-									  <include>**/*.jar</include>
+										<include>**/*.jar</include>
 									</includes>
 								</resource>
 							</resources>
@@ -101,17 +103,17 @@
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>2.4.1</version>
 				<configuration>
-				  <filesets>
-				    <fileset>
-				      <directory>../</directory>
-				      <followSymlinks>false</followSymlinks>
-                                      <includes>
-					<include>bin/</include>
-					<include>conf/</include>
-					<include>lib/</include>
-                                      </includes>				      
-				    </fileset>
-				  </filesets>
+					<filesets>
+						<fileset>
+							<directory>../</directory>
+							<followSymlinks>false</followSymlinks>
+							<includes>
+								<include>bin/</include>
+								<include>conf/</include>
+								<include>lib/</include>
+							</includes>
+						</fileset>
+					</filesets>
 				</configuration>
 			</plugin>
 		</plugins>
