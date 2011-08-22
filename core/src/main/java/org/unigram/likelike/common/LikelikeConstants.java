@@ -96,12 +96,12 @@ public final class LikelikeConstants {
     public static final String LIKELIKE_CASSANDRA_LSH_COLUMNFAMILY_NAME
     = "RelatedPairs";        
     
-	public static final String LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME 
-	= "RecommendationItems";
+    public static final String LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME 
+    = "RecommendationItems";
 
     /** version. */
-    public static final float VERSION = 0.2F;	
-	
+    public static final float VERSION = 0.3F;
+
     /** for safe. */
     private LikelikeConstants() {}
 }
