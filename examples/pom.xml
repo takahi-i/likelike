@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>org.unigram</groupId>
 			<artifactId>core</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.3.0</version>
 		</dependency>
 	</dependencies>
 </project>
