@@ -27,14 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import me.prettyprint.cassandra.service.PoolExhaustedException;
-import me.prettyprint.cassandra.testutils.EmbeddedServerHelper;
-
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.ColumnParent;
-import org.apache.cassandra.thrift.NotFoundException;
-import org.apache.cassandra.thrift.SlicePredicate;
-import org.apache.cassandra.thrift.SliceRange;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.MultiHashMap;
 import org.apache.hadoop.conf.Configuration;
@@ -42,12 +34,9 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.OutputLogFilter;
-import org.apache.thrift.transport.TTransportException;
 
 import org.unigram.likelike.common.LikelikeConstants;
 import org.unigram.likelike.lsh.LSHRecommendations;
-import org.unigram.likelike.util.accessor.CassandraWriter;
-import org.unigram.likelike.util.accessor.cassandra.AccessRelatedExamples;
 
 import junit.framework.TestCase;
 
@@ -85,21 +74,6 @@ public class TestLSHRecommendations extends TestCase {
         return true;
     }
     
-    public boolean cassandraRunWithCheck(int depth, int iterate) {
-        Configuration conf = new Configuration();
-        conf.set("fs.default.name", "file:///");
-        conf.set("mapred.job.tracker", "local");            
-        
-        // run
-        if (this.run(depth, iterate, 
-        		"cassandra", conf) 
-        		== false) {
-            return false;
-        }
-        this.cassandraCheck(conf);
-        return true;
-    }
-
     public boolean run(int depth, int iterate, String writer, Configuration conf) {
         /* run lsh */
         String[] args = {"-input",  this.inputPath, 
@@ -122,26 +96,9 @@ public class TestLSHRecommendations extends TestCase {
     }
     
     public void testRun() {
-        
         assertTrue(this.dfsRunWithCheck(1, 1));
         assertTrue(this.dfsRunWithCheck(1, 5));
         assertTrue(this.dfsRunWithCheck(1, 10));
-        
-        try {
-            embedded = new EmbeddedServerHelper();
-            embedded.setup();
-        } catch (TTransportException e) {
-        	//e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        assertTrue(this.cassandraRunWithCheck(1, 1));
-        assertTrue(this.cassandraRunWithCheck(1, 5));
-        assertTrue(this.cassandraRunWithCheck(1, 10));
-        
-        embedded.teardown();
-        
     }
     
     private void check(MultiHashMap resultMap) {
@@ -160,34 +117,6 @@ public class TestLSHRecommendations extends TestCase {
         assertFalse(resultMap.containsKey(new Long(8)));
     }
 
-    private boolean cassandraCheck(Configuration conf) {
-    	
-    	AccessRelatedExamples accessor = null	;
-    	accessor = new AccessRelatedExamples(conf);
-
-        Long keys[] = {0L, 1L, 2L, 3L, 7L, 8L};
-        MultiHashMap resultMap = new MultiHashMap();
-        for (int i =0; i<keys.length; i++) {
-            Long key = keys[i];
-            try {
-            	Map<String, byte[]> results = accessor.read(key);
-                //System.out.println("key:" + key.toString() 
-		//+ "\tcols.size() = " + results.size());
-                Iterator itrHoge = results.keySet().iterator();
-                while(itrHoge.hasNext()){
-                    String v = (String) itrHoge.next();
-                    //System.out.println("\tvalue: " + v);
-                    resultMap.put(key, v);                    
-                   	}
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            } 
-        }
-        this.check(resultMap);
-        return true;        
-    }
-    
     private boolean dfsCheck(Configuration conf, 
             Path outputPath) 
     throws IOException {
@@ -224,7 +153,4 @@ public class TestLSHRecommendations extends TestCase {
     private String inputPath  = "testSmallInput.txt";
 
     private String outputPath = "outputLSH";
-
-    private static EmbeddedServerHelper embedded;
-    
 }

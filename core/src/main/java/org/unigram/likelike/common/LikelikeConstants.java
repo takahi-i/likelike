@@ -87,21 +87,21 @@ public final class LikelikeConstants {
     
     /** symbol: cassandra columnfamily name. */
     public static final String CASSANDRA_COLUMNFAMILY_NAME
-    = "likelike.cassandra.columnfamily.name";    
+    = "likelike.cassandra.columnfamily.name";
     
     /** default: output table name. */
     public static final String DEFAULT_CASSANDRA_COLUMNFAMILY_NAME
     = "RelatedPairs";
     
     public static final String LIKELIKE_CASSANDRA_LSH_COLUMNFAMILY_NAME
-    = "RelatedPairs";        
+    = "RelatedPairs";
     
-	public static final String LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME 
-	= "RecommendationItems";
+    public static final String LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME
+    = "RecommendationItems";
 
     /** version. */
-    public static final float VERSION = 0.2F;	
-	
+    public static final float VERSION = 0.3F;
+
     /** for safe. */
     private LikelikeConstants() {}
 }

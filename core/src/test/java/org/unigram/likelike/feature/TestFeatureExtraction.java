@@ -10,26 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import me.prettyprint.cassandra.service.CassandraClientPoolFactory;
-import me.prettyprint.cassandra.service.PoolExhaustedException;
-import me.prettyprint.cassandra.testutils.EmbeddedServerHelper;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.OutputLogFilter;
-import org.apache.thrift.transport.TTransportException;
-import org.apache.cassandra.thrift.Column;
-import org.apache.cassandra.thrift.ColumnParent;
-import org.apache.cassandra.thrift.NotFoundException;
-import org.apache.cassandra.thrift.SlicePredicate;
-import org.apache.cassandra.thrift.SliceRange;
 import org.apache.commons.collections.MultiHashMap;
 import org.unigram.likelike.common.LikelikeConstants;
-import org.unigram.likelike.util.accessor.CassandraWriter;
 import org.unigram.likelike.util.accessor.IWriter;
-import org.unigram.likelike.util.accessor.cassandra.AccessRecommendedFeatures;
 
 import junit.framework.TestCase;
 
@@ -42,68 +30,14 @@ public class TestFeatureExtraction extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     public void testRun() {
-    	// test with hadoop dfs
-    	this.dfsRunWithCheck();
-        
-    	// test with cassandra
-        try {
-            embedded = new EmbeddedServerHelper();
-            embedded.setup();
-        } catch (TTransportException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	
-    	this.cassandraRunWithCheck();
-        embedded.teardown();
+      // test with hadoop dfs
+      this.dfsRunWithCheck();
     }
     
-    public void cassandraRunWithCheck() {
-        // settings 
-        Configuration conf = new Configuration();
-        conf.set("fs.default.name", "file:///");
-        conf.set("mapred.job.tracker", "local");
 
-        // run
-        this.run("cassandra"
-        		, conf);
-        
-        /* check result */
-        assertTrue(this.checkCassandraResults(conf));
-    }
-    
-	private boolean checkCassandraResults(Configuration conf) {
-
-		AccessRecommendedFeatures accessor = new AccessRecommendedFeatures(conf);
-        Long keys[] = {0L, 2L};
-        MultiHashMap resultMap = new MultiHashMap();
-        for (int i =0; i<keys.length; i++) {
-            Long key = keys[i];
-            try {
-            	Map<String, byte[]> cols  = accessor.read(key);
-                //System.out.println("key:" + key.toString() 
-                //		+ "\tcols.size() = " + cols.size());
-                
-                Iterator itrHoge = cols.keySet().iterator();
-                while(itrHoge.hasNext()){
-                    String v = (String) itrHoge.next();
-                    //System.out.println("\tvalue: " + v);
-                    resultMap.put(key, // target  
-                            Long.parseLong(v));                    
-                   }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            } 
-        }
-        
-        return this.checkResults(resultMap);
-	}
-
-	public void dfsRunWithCheck() {
+    public void dfsRunWithCheck() {
         // settings 
         Configuration conf = new Configuration();
         conf.set("fs.default.name", "file:///");
@@ -123,9 +57,8 @@ public class TestFeatureExtraction extends TestCase {
         }
         /* check result */
         assertTrue(this.checkResults(resultMap));
-        
     }
-    
+
     public boolean run(String writer, Configuration conf) {
 
          /* run feature extraction */
@@ -147,7 +80,7 @@ public class TestFeatureExtraction extends TestCase {
          }    	
          return true;
     }
-    
+
     public boolean checkResults(MultiHashMap resultMap) {
         Set keys = resultMap.keySet();
         assertTrue(keys.size() == 2);
@@ -172,7 +105,7 @@ public class TestFeatureExtraction extends TestCase {
 
         return true;
     }
-    
+
     protected MultiHashMap getResultMap(
             Configuration conf, 
             Path outputPath) throws IOException {
@@ -197,19 +130,16 @@ public class TestFeatureExtraction extends TestCase {
                         Long.parseLong(lineArray[1]));
         }
         return resultMap;
-    }    
-    
+    }
+
     private BufferedReader asBufferedReader(final InputStream in)
     throws IOException {
         return new BufferedReader(new InputStreamReader(in));
     }
-    
+
     private String recommendPath  = "testSmallRecommend.txt";
 
     private String featurePath = "testSmallInput.txt";
-    
-    private String outputPath = "outputFeatureExtraction";    
 
-    private static EmbeddedServerHelper embedded;    
-    
+    private String outputPath = "outputFeatureExtraction";    
 }
