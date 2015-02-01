@@ -1,13 +1,6 @@
 package org.unigram.likelike.validate;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
+import junit.framework.TestCase;
 import org.apache.commons.collections.MultiHashMap;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -15,9 +8,12 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.OutputLogFilter;
 
-import org.unigram.likelike.validate.Validation;
-
-import junit.framework.TestCase;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collection;
+import java.util.Set;
 
 abstract class RunWithCheck {
     
@@ -29,7 +25,7 @@ abstract class RunWithCheck {
         String featurePath   
             = "testSmallInput.txt";
         String outputPath    
-            = "build/test/outputValidation";
+            = "outputValidation";
         String thresholdStr 
             = Double.toString(threshold);
 
@@ -74,14 +70,13 @@ abstract class RunWithCheck {
             fs.listStatus(outputPath, new OutputLogFilter()));
 
         if (outputFiles != null) {
-            TestCase.assertEquals(outputFiles.length, 1);
+            TestCase.assertEquals(outputFiles.length, 2);
         } else {
             TestCase.fail();
         }
 
         BufferedReader reader = this.asBufferedReader(
-                fs.open(outputFiles[0]));        
-        
+                fs.open(outputFiles[1]));
         String line;
         MultiHashMap resultMap = new MultiHashMap();
         while ((line = reader.readLine()) != null) {
@@ -160,7 +155,7 @@ public class TestValidation extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     public void testRun() {
         RunWithCheck00 run00 = new RunWithCheck00();
         assertTrue(run00.run());
