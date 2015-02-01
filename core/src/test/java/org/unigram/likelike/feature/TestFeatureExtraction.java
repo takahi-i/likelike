@@ -1,25 +1,20 @@
 package org.unigram.likelike.feature;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import junit.framework.TestCase;
+import org.apache.commons.collections.MultiHashMap;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.OutputLogFilter;
-import org.apache.commons.collections.MultiHashMap;
 import org.unigram.likelike.common.LikelikeConstants;
-import org.unigram.likelike.util.accessor.IWriter;
 
-import junit.framework.TestCase;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collection;
+import java.util.Set;
 
 public class TestFeatureExtraction extends TestCase {
 
@@ -30,12 +25,11 @@ public class TestFeatureExtraction extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
     }
-    
+
     public void testRun() {
-    	// test with hadoop dfs
-    	this.dfsRunWithCheck();
+      // test with hadoop dfs
+      this.dfsRunWithCheck();
     }
-    
 
     public void dfsRunWithCheck() {
         // settings 
@@ -47,7 +41,7 @@ public class TestFeatureExtraction extends TestCase {
         this.run("dfs", conf);       
     
         /* extract result*/
-        MultiHashMap resultMap = null;
+        MultiHashMap resultMap;
         try {
             resultMap = this.getResultMap(conf, 
                     new Path(this.outputPath));
@@ -58,7 +52,7 @@ public class TestFeatureExtraction extends TestCase {
         /* check result */
         assertTrue(this.checkResults(resultMap));
     }
-    
+
     public boolean run(String writer, Configuration conf) {
 
          /* run feature extraction */
@@ -77,10 +71,10 @@ public class TestFeatureExtraction extends TestCase {
          } catch (Exception e) {
              e.printStackTrace();
              return false;
-         }    	
+         }
          return true;
     }
-    
+
     public boolean checkResults(MultiHashMap resultMap) {
         Set keys = resultMap.keySet();
         assertTrue(keys.size() == 2);
@@ -105,7 +99,7 @@ public class TestFeatureExtraction extends TestCase {
 
         return true;
     }
-    
+
     protected MultiHashMap getResultMap(
             Configuration conf, 
             Path outputPath) throws IOException {
@@ -114,14 +108,14 @@ public class TestFeatureExtraction extends TestCase {
             fs.listStatus(outputPath, new OutputLogFilter()));
 
         if (outputFiles != null) {
-            TestCase.assertEquals(outputFiles.length, 1);
+            TestCase.assertEquals(outputFiles.length, 2);
         } else {
             TestCase.fail();
         }
 
         BufferedReader reader = this.asBufferedReader(
-                fs.open(outputFiles[0]));        
-        
+                fs.open(outputFiles[1]));
+
         String line;
         MultiHashMap resultMap = new MultiHashMap();
         while ((line = reader.readLine()) != null) {
@@ -130,17 +124,16 @@ public class TestFeatureExtraction extends TestCase {
                         Long.parseLong(lineArray[1]));
         }
         return resultMap;
-    }    
-    
+    }
+
     private BufferedReader asBufferedReader(final InputStream in)
     throws IOException {
         return new BufferedReader(new InputStreamReader(in));
     }
-    
+
     private String recommendPath  = "testSmallRecommend.txt";
 
     private String featurePath = "testSmallInput.txt";
-    
-    private String outputPath = "outputFeatureExtraction";    
 
+    private String outputPath = "outputFeatureExtraction";
 }

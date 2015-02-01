@@ -16,18 +16,7 @@
  */
 package org.unigram.likelike.lsh;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.collections.MultiMap;
+import junit.framework.TestCase;
 import org.apache.commons.collections.MultiHashMap;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -35,10 +24,11 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.OutputLogFilter;
 
-import org.unigram.likelike.common.LikelikeConstants;
-import org.unigram.likelike.lsh.LSHRecommendations;
-
-import junit.framework.TestCase;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Collection;
 
 public class TestLSHRecommendations extends TestCase {
 
@@ -96,11 +86,9 @@ public class TestLSHRecommendations extends TestCase {
     }
     
     public void testRun() {
-        
         assertTrue(this.dfsRunWithCheck(1, 1));
         assertTrue(this.dfsRunWithCheck(1, 5));
         assertTrue(this.dfsRunWithCheck(1, 10));
-        
     }
     
     private void check(MultiHashMap resultMap) {
@@ -126,14 +114,8 @@ public class TestLSHRecommendations extends TestCase {
         Path[] outputFiles = FileUtil.stat2Paths(
             fs.listStatus(outputPath, new OutputLogFilter()));
 
-        //if (outputFiles != null) {
-        //    TestCase.assertEquals(outputFiles.length, 1);
-        //} else {
-        //    TestCase.fail();
-        //}
-
         BufferedReader reader = this.asBufferedReader(
-                fs.open(outputFiles[0]));        
+                fs.open(outputFiles[1]));
         
         String line;
         MultiHashMap resultMap = new MultiHashMap();
@@ -155,6 +137,4 @@ public class TestLSHRecommendations extends TestCase {
     private String inputPath  = "testSmallInput.txt";
 
     private String outputPath = "outputLSH";
-
-    
 }
