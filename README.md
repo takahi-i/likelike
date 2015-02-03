@@ -15,6 +15,12 @@ News
 - 2011-08-22 likelike 0.3.0 released
 switched the build system from Ant into Maven.
 - 2010-05-06 likelike 0.2.0 released
+- 2015-02-03 support Hadoop v2.4
+
+Requirements
+===============
+- Java 1.6.0 or greater
+- Hadoop 2.4 or greater
 
 Applications
 ==============
