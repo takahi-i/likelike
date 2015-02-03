@@ -81,7 +81,7 @@ abstract class RunWithCheck {
                 continue;
             }
             BufferedReader reader = this.asBufferedReader(
-                    fs.open(outputFiles[1]));
+                    fs.open(outputFile));
             String line;
 
             while ((line = reader.readLine()) != null) {
