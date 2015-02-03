@@ -114,19 +114,24 @@ public class TestLSHRecommendations extends TestCase {
         Path[] outputFiles = FileUtil.stat2Paths(
             fs.listStatus(outputPath, new OutputLogFilter()));
 
-        BufferedReader reader = this.asBufferedReader(
-                fs.open(outputFiles[1]));
-        
-        String line;
-        MultiHashMap resultMap = new MultiHashMap();
-        while ((line = reader.readLine()) != null) {
-            String[] lineArray = line.split("\t");
-            resultMap.put(Long.parseLong(lineArray[0]), // target 
-                    Long.parseLong(lineArray[1]));      // recommended
-            
+        for (Path outputFile : outputFiles) {
+            if (!outputFile.getName().startsWith("part-")) {
+                continue;
+            }
+            BufferedReader reader = this.asBufferedReader(
+                    fs.open(outputFile));
+            String line;
+            MultiHashMap resultMap = new MultiHashMap();
+            while ((line = reader.readLine()) != null) {
+                String[] lineArray = line.split("\t");
+                resultMap.put(Long.parseLong(lineArray[0]), // target
+                        Long.parseLong(lineArray[1]));      // recommended
+
+            }
+            this.check(resultMap);
+            return true;
         }
-        this.check(resultMap);
-        return true;
+        return false;
     }
     
     private BufferedReader asBufferedReader(final InputStream in)

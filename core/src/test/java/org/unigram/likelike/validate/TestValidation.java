@@ -75,15 +75,20 @@ abstract class RunWithCheck {
             TestCase.fail();
         }
 
-        BufferedReader reader = this.asBufferedReader(
-                fs.open(outputFiles[1]));
-        String line;
         MultiHashMap resultMap = new MultiHashMap();
-        while ((line = reader.readLine()) != null) {
-            String[] lineArray = line.split("\t");
-            resultMap.put(Long.parseLong(lineArray[0]),
-                    Long.parseLong(lineArray[1]));
-            
+        for (Path outputFile : outputFiles) {
+            if (!outputFile.getName().startsWith("part-")) {
+                continue;
+            }
+            BufferedReader reader = this.asBufferedReader(
+                    fs.open(outputFiles[1]));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] lineArray = line.split("\t");
+                resultMap.put(Long.parseLong(lineArray[0]),
+                        Long.parseLong(lineArray[1]));
+            }
         }
         return resultMap;
     }
