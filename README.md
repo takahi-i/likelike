@@ -10,12 +10,12 @@ Likelike is an implementation of LSH (locality sensitive hashing) on Hadoop. Thi
 
 News
 ======
+- 2015-02-03 support Hadoop v2.4
 - 2013-01-01 port the code into Github
 - 2011-09-26 gave a presentation in the Hadoop conference Japan Fall (slides)
 - 2011-08-22 likelike 0.3.0 released
 switched the build system from Ant into Maven.
 - 2010-05-06 likelike 0.2.0 released
-- 2015-02-03 support Hadoop v2.4
 
 Requirements
 ===============
