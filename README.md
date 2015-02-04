@@ -8,6 +8,10 @@ Overview
 
 Likelike is an implementation of LSH (locality sensitive hashing) on Hadoop. This program can be used for the nearest neighbor extraction or item recommendation in E-commerce sites. Currently Likelike supports only Min-Wise independent permutations. Min-Wise independent permutations is applied to the recommendation of Google News (Das et al. 2007).
 
+Usage
+========
+Begin with the Likelike quick start page ([QuickStart](https://github.com/takahi-i/likelike/wiki/Qick-Start)) which provides the information on the installation and tutorial with small input files. For detailed usage, please visit the [Usage](https://github.com/takahi-i/likelike/wiki/Usage) page.
+
 News
 ======
 - 2015-02-03 support Hadoop v2.4
@@ -30,15 +34,11 @@ Likelike can be applied to following tasks.
 - similar documents (or images) extraction
 - news recommendation from click through log data
 
-Usage
-========
-Begin with the Likelike quick start page (QuickStart) which provides the information on the installation and tutorial with small input files. For detailed usage, please visit the page, Usage.
-
 To do
 ========
 - provide detailed usage page
 - provide server function
-- nsupport feature selection
+- support feature selection
 - performance tuning
 
 Author
