@@ -1,17 +1,17 @@
 package org.unigram.likelike.validate;
 
-import java.io.IOException;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+
+import java.io.IOException;
 
 /**
  *
  */
 public class ValidationMapper extends Mapper
     <LongWritable, Text, LongWritable, Text> {
-    
+
     /**
      * map.
      * @param key -

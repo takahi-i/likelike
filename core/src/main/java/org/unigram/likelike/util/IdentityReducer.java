@@ -1,18 +1,15 @@
 package org.unigram.likelike.util;
 
-import java.io.IOException;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Reducer.Context;
+
+import java.io.IOException;
 
 /**
  *
  */
-public class IdentityReducer extends Reducer<LongWritable, Text, 
-    LongWritable, Text> {
-    
+public class IdentityReducer extends Reducer<LongWritable, Text, LongWritable, Text> {
     /**
      * Reduce method.
      * @param key -
@@ -29,5 +26,5 @@ public class IdentityReducer extends Reducer<LongWritable, Text,
         for (Text v : values) {
             context.write(key, v);
         }
-    }   
+    }
 }

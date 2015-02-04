@@ -1,17 +1,15 @@
 package org.unigram.likelike.util;
 
-import java.io.IOException;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import java.io.IOException;
+
 /**
  *
  */
-public class AddFeatureMapper extends
-        Mapper<LongWritable, Text, LongWritable, Text> {
-  
+public class AddFeatureMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
     /**
      * Map method.
      * 

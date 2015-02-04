@@ -16,18 +16,11 @@
  */
 package org.unigram.likelike.lsh;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Random;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
-
 import org.apache.hadoop.mapreduce.Counters;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -36,24 +29,18 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.unigram.likelike.common.*;
 
-import org.unigram.likelike.common.Candidate;
-import org.unigram.likelike.common.FsUtil;
-import org.unigram.likelike.common.LikelikeConstants;
-import org.unigram.likelike.common.LikelikeLogger;
-import org.unigram.likelike.common.RelatedUsersWritable;
-import org.unigram.likelike.common.SeedClusterId;
-import org.unigram.likelike.lsh.GetRecommendationsMapper;
-import org.unigram.likelike.lsh.GetRecommendationsReducer;
-import org.unigram.likelike.lsh.SelectClustersMapper;
-import org.unigram.likelike.lsh.SelectClustersReducer;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Random;
 
 /**
  * Extract recommendations for input examples. 
  */
-public class LSHRecommendations extends
-    Configured implements Tool {
-    
+public class LSHRecommendations extends Configured implements Tool {
     /** logger. */
     protected final LikelikeLogger logger 
         = LikelikeLogger.getLogger();
@@ -122,20 +109,20 @@ public class LSHRecommendations extends
                 conf.setLong(LikelikeConstants.MAX_OUTPUT_SIZE, 
                         Long.parseLong(args[++i]));
             } else if ("-storage".equals(args[i])) {
-            	String storageType = args[++i];
-            	if (storageType.equals("dfs")) {
-            		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
-            				LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
-            	} else if  (storageType.equals("cassandra")) {
-            		conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER, 
-            				this.cassandraAccessor);            		
-            	}  
+                String storageType = args[++i];
+                if (storageType.equals("dfs")) {
+                    conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER,
+                            LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
+                } else if  (storageType.equals("cassandra")) {
+                    conf.set(LikelikeConstants.LIKELIKE_OUTPUT_WRITER,
+                            this.cassandraAccessor);
+                }
             } else if ("-help".equals(args[i])) {
                 this.showParameters();
                 return 0;
             }
         }
-        
+
         this.setHashKeys(iterate, inputFile, conf);
         this.extractClusters(inputFile, clusterDir, conf);
         this.getRecommendations(clusterDir, 
@@ -351,7 +338,5 @@ public class LSHRecommendations extends
         int exitCode = ToolRunner.run(
                 new LSHRecommendations(), args);
         System.exit(exitCode);
-    }    
-    
-    
+    }
 }

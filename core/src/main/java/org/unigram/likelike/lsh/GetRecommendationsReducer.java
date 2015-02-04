@@ -66,7 +66,6 @@ public class GetRecommendationsReducer extends
                 candidates.put(tid, 
                         new Double(1.0));
             }
-            
             if (candidates.size() > 50000) { // TODO should be parameterized
                 break;
             }

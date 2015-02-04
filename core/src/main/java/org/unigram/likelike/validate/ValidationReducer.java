@@ -1,27 +1,19 @@
 package org.unigram.likelike.validate;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Mapper.Context;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  *
  */
 public class ValidationReducer extends
     Reducer<LongWritable, Text, LongWritable, Text> {
-
-
-    /** 
+    /**
      * Reduce method.
      * @param candidate candidate id
      * @param values targets and candidateFeature
@@ -85,7 +77,7 @@ public class ValidationReducer extends
         } else {
             return (ip / norm);
         }
-    }    
+    }
     
     /**
      * Calculate inner product between two vectors.
@@ -155,8 +147,8 @@ public class ValidationReducer extends
         this.threshold = jc.getFloat(
                 ValidationConstants.VALIDATION_THRESHOLD,
                 ValidationConstants.DEFAULT_VALIDATION_THRESHOLD);        
-    }    
-    
+    }
+
     /** minimum cosine value. */
     private float threshold;
 }

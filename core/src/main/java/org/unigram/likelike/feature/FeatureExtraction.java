@@ -1,7 +1,5 @@
 
 package org.unigram.likelike.feature;
-import java.io.IOException;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -13,13 +11,14 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-
 import org.unigram.likelike.common.FsUtil;
 import org.unigram.likelike.common.LikelikeConstants;
-import org.unigram.likelike.util.IdentityReducer;
-import org.unigram.likelike.util.InverseMapper;
 import org.unigram.likelike.util.AddFeatureMapper;
 import org.unigram.likelike.util.AddFeatureReducer;
+import org.unigram.likelike.util.IdentityReducer;
+import org.unigram.likelike.util.InverseMapper;
+
+import java.io.IOException;
 
 /**
  *
@@ -33,7 +32,6 @@ public class FeatureExtraction  extends Configured
      * @return 0 when succeeded
      * @throws Exception -
      */
-    @Override
     public int run(final String[] args) throws Exception {
         Configuration conf = getConf();
         return this.run(args, conf);   
