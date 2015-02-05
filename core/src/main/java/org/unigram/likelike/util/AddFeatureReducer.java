@@ -16,21 +16,18 @@
  */
 package org.unigram.likelike.util;
 
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Reducer.Context;
-
 /**
  *
  */
-public class AddFeatureReducer extends
-        Reducer<LongWritable, Text, LongWritable, Text> {
-    
+public class AddFeatureReducer extends Reducer<LongWritable, Text, LongWritable, Text> {
     /**
      * Reduce method.
      * @param key -
@@ -59,7 +56,6 @@ public class AddFeatureReducer extends
         if (rtValue==null) {
             return;
         }
-        
         for (Long v : candidates) {
             /* write with inverse key and value */ 
             /* caution: inverse key (target) and value (candidate) */

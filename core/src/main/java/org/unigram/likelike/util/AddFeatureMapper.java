@@ -1,17 +1,15 @@
 package org.unigram.likelike.util;
 
-import java.io.IOException;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import java.io.IOException;
+
 /**
  *
  */
-public class AddFeatureMapper extends
-        Mapper<LongWritable, Text, LongWritable, Text> {
-  
+public class AddFeatureMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
     /**
      * Map method.
      * 
@@ -34,7 +32,7 @@ public class AddFeatureMapper extends
                         new Text(valueArray[1]));
         } else {
             System.out.println(
-                    "Input hould have two segments: " + valueStr);
+                    "Input should have two segments: " + valueStr);
         }
     }
 }

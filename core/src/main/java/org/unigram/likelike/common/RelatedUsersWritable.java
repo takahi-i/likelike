@@ -16,15 +16,15 @@
  */
 package org.unigram.likelike.common;
 
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Writable;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Writable;
 
 /**
  *
@@ -72,7 +72,6 @@ public class RelatedUsersWritable implements Writable {
      * @param in input stream
      * @throws IOException -
      */
-    @Override
     public void readFields(final DataInput in) throws IOException {
         try {
             int listSize = in.readInt();
@@ -93,7 +92,6 @@ public class RelatedUsersWritable implements Writable {
      * @param out output stream
      * @throws IOException -
      */
-    @Override
     public void write(final DataOutput out) throws IOException {
         out.writeInt(this.relatedUsers.size());
         for (LongWritable item : this.relatedUsers) {

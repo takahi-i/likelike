@@ -97,13 +97,12 @@ public class FeatureExtractionReducer extends
             Map.Entry obj = (Map.Entry) it.next();
             Long feature = (Long) obj.getKey();
             if (!targetFeatures.containsKey(feature)) {
-            	//System.out.println("target: " + target + "\tfeature: " + feature);
-            	try {
-					this.writer.write((Long) target.get(), feature, context);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                try {
+                    this.writer.write((Long) target.get(), feature, context);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -145,7 +144,7 @@ public class FeatureExtractionReducer extends
                 LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER;
         
         jc.set(LikelikeConstants.CASSANDRA_COLUMNFAMILY_NAME, 
-        		LikelikeConstants.LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME);
+                LikelikeConstants.LIKELIKE_CASSANDRA_FEATURE_EXTRACTION_COLUMNFAMILY_NAME);
         
         try {
             writerClassName = 

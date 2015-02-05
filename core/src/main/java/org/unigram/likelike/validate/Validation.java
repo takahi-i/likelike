@@ -1,7 +1,5 @@
 package org.unigram.likelike.validate;
 
-import java.io.IOException;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -20,18 +18,18 @@ import org.unigram.likelike.util.AddFeatureReducer;
 import org.unigram.likelike.util.IdentityReducer;
 import org.unigram.likelike.util.InverseMapper;
 
+import java.io.IOException;
+
 /**
  *
  */
 public class Validation extends Configured implements Tool {
-    
     /**
      * Run.
      * @param args arguments
      * @return 0
      * @throws Exception -
      */
-    @Override
     public int run(final String[] args) throws Exception {
         Configuration conf = getConf();
         return this.run(args, conf);        
@@ -103,7 +101,7 @@ public class Validation extends Configured implements Tool {
         Path inputPath = new Path(inputDir);
         Path outputPath = new Path(outputDir);
         FsUtil.checkPath(outputPath, this.fs);
-        
+
         Job job = new Job(conf);
         job.setJarByClass(Validation.class);
         FileInputFormat.addInputPath(job, inputPath);
@@ -219,8 +217,8 @@ public class Validation extends Configured implements Tool {
                 + "use VALUE as the threshold  to output pairs");        
         System.out.println("    [-help]                   "
                 + "show this message");
-    }    
-        
+    }
+
     /**
      * Main method.
      *
@@ -233,7 +231,7 @@ public class Validation extends Configured implements Tool {
                 new Validation(), args);
         System.exit(exitCode);
     }
-    
+
     /** File system. */
     private FileSystem fs = null;
 }

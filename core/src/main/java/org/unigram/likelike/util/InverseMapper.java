@@ -1,18 +1,15 @@
 package org.unigram.likelike.util;
 
-import java.io.IOException;
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Mapper.Context;
+
+import java.io.IOException;
 
 /**
  *
  */
-public class InverseMapper extends Mapper<LongWritable, 
-    Text, LongWritable, Text> {
-    
+public class InverseMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
     /**
      * Map method.
      * @param dummy -
@@ -27,7 +24,6 @@ public class InverseMapper extends Mapper<LongWritable,
     throws InterruptedException, IOException {
         String valueStr = value.toString();        
         String[] valueArray = valueStr.split("\t");
-        
         if (valueArray.length == 2) {
             context.write(
                     new LongWritable(Long.parseLong(valueArray[1])), 

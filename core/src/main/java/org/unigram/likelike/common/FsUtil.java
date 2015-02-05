@@ -16,12 +16,12 @@
  */
 package org.unigram.likelike.common;
 
-import java.io.IOException;
-import java.util.logging.Level;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+
+import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * File utility class. 
@@ -49,7 +49,7 @@ public final class FsUtil {
            final FileSystem fs)
    throws IOException {
         if (fs.exists(dir)) {
-            logger.log(Level.INFO, "Overiding: " + dir.toString());
+            logger.log(Level.INFO, "Overriding: " + dir.toString());
             return fs.delete(dir, true);
         } else {
             logger.log(Level.FINE, "No such file: " + dir.toString());
@@ -80,16 +80,15 @@ public final class FsUtil {
     */
    public static void clean(final FileSystem fs, 
        final String... fileNames) throws IOException {
-       
-       for (int i = 0; i < fileNames.length; i++) {
-           Path path = new Path(fileNames[i]);
+
+       for (String fileName : fileNames) {
+           Path path = new Path(fileName);
            if (fs.exists(path)) {
-               logger.log(Level.INFO, 
+               logger.log(Level.INFO,
                        "Removing: " + path.toString());
                fs.delete(path, true);
            }
        }
-       return;
-   }   
+   }
 
 }
