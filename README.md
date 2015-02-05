@@ -23,7 +23,7 @@ switched the build system from Ant into Maven.
 
 Requirements
 ===============
-- Java 1.6.0 or greater
+- Java 1.７.0 or greater
 - Hadoop 2.4 or greater
 
 Applications
