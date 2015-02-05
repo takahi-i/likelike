@@ -16,22 +16,20 @@
  */
 package org.unigram.likelike.lsh;
          
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.unigram.likelike.common.LikelikeConstants;
+import org.unigram.likelike.common.RelatedUsersWritable;
+import org.unigram.likelike.common.SeedClusterId;
+import org.unigram.likelike.lsh.function.IHashFunction;
+
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Mapper.Context;
-
-import org.unigram.likelike.common.LikelikeConstants;
-import org.unigram.likelike.common.RelatedUsersWritable;
-import org.unigram.likelike.common.SeedClusterId;
-import org.unigram.likelike.lsh.function.IHashFunction;
 
 /**
  * SelectClustersMapper.
@@ -114,16 +112,10 @@ public class SelectClustersMapper extends
                 = functionClass
                     .getConstructor(Configuration.class);
             function = constructor.newInstance(jc);
-        } catch (NoSuchMethodException nsme) {
-            throw new RuntimeException(nsme);
-        } catch (ClassNotFoundException cnfe) {
-            throw new RuntimeException(cnfe);
-        } catch (InstantiationException ie) {
-            throw new RuntimeException(ie);
-        } catch (IllegalAccessException iae) {
-            throw new RuntimeException(iae);
-        } catch (InvocationTargetException ite) {
-            throw new RuntimeException(ite.getCause());
+        } catch (NoSuchMethodException | ClassNotFoundException |
+                InstantiationException | IllegalAccessException |
+                InvocationTargetException e){
+            throw new RuntimeException(e);
         }
         
         /* extract set of hash seeds */

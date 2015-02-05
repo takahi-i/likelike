@@ -32,7 +32,7 @@ public class AddFeatureMapper extends Mapper<LongWritable, Text, LongWritable, T
                         new Text(valueArray[1]));
         } else {
             System.out.println(
-                    "Input hould have two segments: " + valueStr);
+                    "Input should have two segments: " + valueStr);
         }
     }
 }

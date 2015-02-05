@@ -40,7 +40,6 @@ import org.unigram.likelike.util.accessor.IWriter;
 public class GetRecommendationsReducer extends
         Reducer<LongWritable, Candidate, 
         LongWritable, LongWritable> {
-    
     /**
      * reduce. 
      * @param key target
@@ -53,8 +52,7 @@ public class GetRecommendationsReducer extends
             final Iterable<Candidate> values,
             final Context context)
             throws IOException, InterruptedException {
-        
-        HashMap<Long, Double> candidates 
+        HashMap<Long, Double> candidates
             = new HashMap<Long, Double>();
         for (Candidate cand : values) {
             Long tid = cand.getId().get();
@@ -63,8 +61,7 @@ public class GetRecommendationsReducer extends
                weight += 1.0; // not use the size of the cluster
                candidates.put(tid, weight);
             } else {
-                candidates.put(tid, 
-                        new Double(1.0));
+                candidates.put(tid, new Double(1.0));
             }
             if (candidates.size() > 50000) { // TODO should be parameterized
                 break;
@@ -108,7 +105,7 @@ public class GetRecommendationsReducer extends
      */
     @Override
     public final void setup(final Context context) {
-        Configuration jc = null; 
+        Configuration jc = null;
 
         if (context == null) {
             jc = new Configuration();
@@ -117,11 +114,11 @@ public class GetRecommendationsReducer extends
         }
 
         this.maxOutputSize = jc.getLong(
-                LikelikeConstants.MAX_OUTPUT_SIZE , 
+                LikelikeConstants.MAX_OUTPUT_SIZE,
                 LikelikeConstants.DEFAULT_MAX_OUTPUT_SIZE);
-        
-        this.comparator = new Comparator<Object>(){
-            public int compare(final Object o1, final Object o2){
+
+        this.comparator = new Comparator<Object>() {
+            public int compare(final Object o1, final Object o2) {
                 Map.Entry e1 = (Map.Entry) o1;
                 Map.Entry e2 = (Map.Entry) o2;
                 Double e1Value = (Double) e1.getValue();
@@ -131,28 +128,20 @@ public class GetRecommendationsReducer extends
         };
 
         // create writer
-        String writerClassName = 
+        String writerClassName =
                 LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER;
         try {
-            writerClassName = 
+            writerClassName =
                     jc.get(LikelikeConstants.LIKELIKE_OUTPUT_WRITER,
-                    LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
+                            LikelikeConstants.DEFAULT_LIKELIKE_OUTPUT_WRITER);
             Class<? extends IWriter> extractorClass = Class.forName(
                     writerClassName).asSubclass(IWriter.class);
             Constructor<? extends IWriter> constructor = extractorClass
                     .getConstructor(Configuration.class);
             this.writer = constructor.newInstance(jc);
-        } catch (NoSuchMethodException nsme) {
-            throw new RuntimeException(nsme);
-        } catch (ClassNotFoundException cnfe) {
-            throw new RuntimeException(cnfe);
-        } catch (InstantiationException ie) {
-            throw new RuntimeException(ie);
-        } catch (IllegalAccessException iae) {
-            throw new RuntimeException(iae);
-        } catch (InvocationTargetException ite) {
-            throw new RuntimeException(ite.getCause());
+        } catch (NoSuchMethodException | ClassNotFoundException | InstantiationException
+                | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
-
-    }    
+    }
 }
